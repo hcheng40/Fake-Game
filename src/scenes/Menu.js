@@ -6,10 +6,19 @@ class Menu extends Phaser.Scene {
     preload() {
         // load images/tile sprites
         this.load.image('map', './assets/map.png')
+        this.load.image('cloud1', './assets/cloud1.png')
+        this.load.image('cloud2', './assets/cloud2.png')
+        this.load.image('cloud3', './assets/cloud3.png')
+        
 
 
         // load spritesheet
-
+        this.load.spritesheet('healthbar', './assets/healthbar.png', {
+            frameWidth: 23,
+            frameHeight: 107,
+            startFrame: 0,
+            endFrame: 4
+        })
 
 
         // load audio

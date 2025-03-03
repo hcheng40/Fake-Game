@@ -11,10 +11,16 @@ class Play extends Phaser.Scene {
         this.isMoving = false
         this.isFiring = false
         this.start = false
+        this.justTakeDamage = false
+        this.fullHealth = false
+
+        this.score = 0
+        this.health = 100
+        this.gameOver = false
+        this.enemyTimer = 200
     }
 
     create() {
-
         // background
         this.map = this.add.image(0, 0, 'map').setOrigin(0)
 
@@ -23,8 +29,9 @@ class Play extends Phaser.Scene {
         // this.bgm.play()
 
         // clouds
-        // this.cloud1 = this.add.sprite(0, 0, 'cloud').setOrigin(0)
-        // this.cloud2 = this.add.sprite(0, 0, 'cloud').setOrigin(0)
+        this.cloud1 = this.add.sprite(this.map.width - 90, this.map.height - 900, 'cloud1').setOrigin(0).setScale(2)
+        this.cloud2 = this.add.sprite(this.map.width - 150, this.map.height - 600, 'cloud2').setOrigin(0).setScale(2.5)
+        this.cloud3 = this.add.sprite(this.map.width - 600, this.map.height - 300, 'cloud3').setOrigin(0).setScale(2.5)
 
         // ground
         this.ground = this.add.group()
@@ -44,7 +51,7 @@ class Play extends Phaser.Scene {
         for (let i = 0; i < Phaser.Math.Between(5, 15); i++) {
             let x = Phaser.Math.Between(-500, this.map.width + 500)
             // reposition if spawn on the character
-            while (x >= 0 && x <= 500){
+            while (x >= 0 && x <= 500) {
                 x = Phaser.Math.Between(-500, this.map.width + 500)
             }
             let y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
@@ -73,12 +80,11 @@ class Play extends Phaser.Scene {
         })
         this.time.addEvent({ delay: 3500, repeat: 0, callback: () => { this.start = true } })
 
-        // variables
-        this.score = 0
-        this.health = 100
-        this.gameOver = false
-        this.enemyTimer = 200
-
+        // health bar
+        this.healthBar = this.add.sprite(this.chr.x - 30, this.chr.y - 30, 'healthbar');
+        this.healthBar.setFrame(0);
+        this.healthBar.setVisible(false);
+        this.updateHealthBar()
 
         // jump key
         keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
@@ -110,6 +116,7 @@ class Play extends Phaser.Scene {
         // add collider
         this.physics.add.collider(this.chr, this.ground)
         this.physics.add.collider(this.enemies, this.ground)
+        this.physics.add.collider(this.chr, this.enemies, () => { this.takeDamage() })
 
 
         // speed increase after 15 seconds
@@ -124,74 +131,121 @@ class Play extends Phaser.Scene {
 
     update() {
         if (!this.start) { return }
-
+        
         if (!this.isMoving) {
             this.chr.body.velocity.x = 0
         }
-
+        
         // srolling clouds
-        // this.cloud1.x -= game.settings.gameSpeed - 1
-        // this.cloud2.x -= game.settings.gameSpeed - 2
-        // if (this.cloud1.x <= 0 - this.cloud1.width * 15) {
-        //     this.cloud1.x = game.config.width
-        // }
-        // if (this.cloud2.x <= 0 - this.cloud2.width * 12) {
-        //     this.cloud2.x = game.config.width
-        // }
-
-
-
+        this.cloud1.x -= game.settings.gameSpeed - 2.6
+        this.cloud2.x -= game.settings.gameSpeed - 2.3
+        this.cloud3.x -= game.settings.gameSpeed - 1.9
+        if (this.cloud1.x <= 0 - this.cloud1.width * 15) {
+            this.cloud1.x = this.map.width
+        }
+        if (this.cloud2.x <= 0 - this.cloud2.width * 12) {
+            this.cloud2.x = this.map.width
+        }
+        if (this.cloud3.x <= 0 - this.cloud3.width * 11) {
+            this.cloud3.x = this.map.width
+        }
+        
+        
+        
         // jump
         if (Phaser.Input.Keyboard.JustDown(keyUP) && this.chr.body.touching.down) {
             this.chr.body.velocity.y = this.JUMP_VELOCITY
         }
-
+        
         // duck
         // if (Phaser.Input.Keyboard.JustDown(keyDOWN) && this.chr.body.touching.down) {
-        //     this.chr.body.velocity.y = this.JUMP_VELOCITY
+            //     this.chr.body.velocity.y = this.JUMP_VELOCITY
+            // }
+            
+            // left/right movement
+            if (keyLEFT.isDown && keyRIGHT.isDown && !this.isMoving) {
+                this.isMoving = true
+            } else if (keyLEFT.isDown && !this.isMoving) {
+                this.chr.body.velocity.x -= this.MOVE_VELOCITY
+                this.isMoving = true
+            } else if (keyRIGHT.isDown && !this.isMoving) {
+                this.chr.body.velocity.x += this.MOVE_VELOCITY
+                this.isMoving = true
+            }
+            if (!keyLEFT.isDown || !keyRIGHT.isDown) {
+                this.isMoving = false
+            }
+            
+            
+            // enemy movement
+            if (this.enemyTimer > 400) {
+                this.enemies.children.iterate((enemy) => {
+                    if (enemy && this.start) {
+                        let angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.chr.x, this.chr.y)
+                        let speed = 100
+                        enemy.setVelocityX(Math.cos(angle) * speed)
+                        // enemy.setVelocityY(Math.sin(angle) * speed)
+                    }
+                })
+                this.enemyTimer = 0
+            }
+            this.enemyTimer++
+            
+            // update health bar
+            this.updateHealthBar()
+
+            
+            // if (at the edge of the plat) {
+                // enemy.setVelocityY = this.JUMP_VELOCITY
+                // }
+                
+                
+                // gameover
+                // if (this.gameOver) {
+                    //     this.sound.play('sfx-die')
+                    //     this.sound.play('sfx-die2')
+                    //     this.clock.remove()
+                    //     this.bgm.stop()
+                    //     this.scene.start('gameOverScene', { score: this.score })
         // }
+    }
 
-        // left/right movement
-        if (keyLEFT.isDown && keyRIGHT.isDown && !this.isMoving) {
-            this.isMoving = true
-        } else if (keyLEFT.isDown && !this.isMoving) {
-            this.chr.body.velocity.x -= this.MOVE_VELOCITY
-            this.isMoving = true
-        } else if (keyRIGHT.isDown && !this.isMoving) {
-            this.chr.body.velocity.x += this.MOVE_VELOCITY
-            this.isMoving = true
+    takeDamage() {
+        if (this.health > 0 && this.justTakeDamage == false) {
+            this.health -= 25
+            this.updateHealthBar()
+            this.healthBar.setVisible(true)
+            this.time.addEvent({ delay: 2000, repeat: 0, callback: () => { this.healthBar.setVisible(false) } })
+            console.log("hit")
+            this.justTakeDamage = true
+            this.time.addEvent({ delay: 2000, repeat: 0, callback: () => { this.justTakeDamage = false } })
+        } else if (this.health <= 0) {
+            this.gameOver = true
         }
-        if (!keyLEFT.isDown || !keyRIGHT.isDown) {
-            this.isMoving = false
+    }
+
+    updateHealthBar() {
+        if (this.health == 100) {
+            this.healthBar.setFrame(0)
+        } else if (this.health == 75) {
+            this.healthBar.setFrame(1)
+        } else if (this.health == 50) {
+            this.healthBar.setFrame(2)
+        } else if (this.health == 25) {
+            this.healthBar.setFrame(3)
+        } else if (this.health == 0) {
+            this.healthBar.setFrame(4)
         }
-
-
-        // enemy movement
-        if (this.enemyTimer > 400) {
-            this.enemies.children.iterate((enemy) => {
-                if (enemy && this.start) {
-                    let angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.chr.x, this.chr.y)
-                    let speed = 100
-                    enemy.setVelocityX(Math.cos(angle) * speed)
-                    // enemy.setVelocityY(Math.sin(angle) * speed)
+        this.healthBar.x = this.chr.x - 70
+        this.healthBar.y = this.chr.y - 50
+        if (this.health >= 100 && this.fullHealth == true) {
+            this.fullHealth = false
+            this.time.addEvent({
+                delay: 1000, repeat: 0, callback: () => {
+                    this.healthBarBackground.setVisible(false)
+                    this.healthBarFill.setVisible(false)
                 }
             })
-            this.enemyTimer = 0
         }
-        this.enemyTimer++
-
-        // if (at the edge of the plat) {
-        // enemy.setVelocityY = this.JUMP_VELOCITY
-        // }
-        
-
-        // gameover
-        // if (this.gameOver) {
-        //     this.sound.play('sfx-die')
-        //     this.sound.play('sfx-die2')
-        //     this.clock.remove()
-        //     this.bgm.stop()
-        //     this.scene.start('gameOverScene', { score: this.score })
-        // }
     }
 }
