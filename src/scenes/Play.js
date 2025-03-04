@@ -13,12 +13,13 @@ class Play extends Phaser.Scene {
         this.start = false
         this.justTakeDamage = false
         this.fullHealth = false
+        this.spawnRange = 300
         this.direction = 0  // right
 
         this.score = 0
         this.health = 100
         this.gameOver = false
-        this.enemyTimer = 200
+        this.enemyReactTimer = 200
     }
 
     create() {
@@ -66,49 +67,22 @@ class Play extends Phaser.Scene {
 
         // Create enemy group
         this.enemies = this.physics.add.group()
-        // apples
-        for (let i = 0; i < Phaser.Math.Between(2, 5); i++) {
-            let x = Phaser.Math.Between(-500, this.map.width + 500)
-            // reposition if spawn on the character
-            while (x >= 0 && x <= 500) {
-                x = Phaser.Math.Between(-500, this.map.width + 500)
-            }
-            let y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
-            let enemy_apple = this.enemies.create(x, y, 'apple').setScale(0.4)
-            enemy_apple.body.setSize(enemy_apple.width * 0.7, enemy_apple.height * 0.8)
-            enemy_apple.body.setOffset((enemy_apple.width - enemy_apple.body.width) / 2, (enemy_apple.height - enemy_apple.body.height))
-            if (Phaser.Math.Between(0, 1) == 0) {
-                enemy_apple.setFlip(true, false)
-            }
-            enemy_apple.setFrame(1)
-            this.time.addEvent({
-                delay: 4500, repeat: 0, callback: () => {
-                    enemy_apple.anims.play('apples')
-                }
-            })
-        }
-        // peaches
-        for (let i = 0; i < Phaser.Math.Between(3, 6); i++) {
-            let x = Phaser.Math.Between(-500, this.map.width + 500)
-            // reposition if spawn on the character
-            while (x >= 0 && x <= 500) {
-                x = Phaser.Math.Between(-500, this.map.width + 500)
-            }
-            let y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
-            let enemy_peach = this.enemies.create(x, y, 'peach').setScale(0.55)
-            enemy_peach.body.setSize(enemy_peach.width * 0.7, enemy_peach.height * 0.85)
-            enemy_peach.body.setOffset((enemy_peach.width - enemy_peach.body.width) / 2, (enemy_peach.height - enemy_peach.body.height))
-            if (Phaser.Math.Between(0, 1) == 0) {
-                enemy_peach.setFlip(true, false)
-            }
-            enemy_peach.setFrame(0)
-            this.time.addEvent({
-                delay: 4500, repeat: 0, callback: () => {
-                    enemy_peach.anims.play('peaches')
-                }
-            })
-        }
+        this.addApple()
+        this.addPeach()
 
+        this.enemySpawnTimer = this.time.addEvent({
+            delay: 3000,
+            loop: true,
+            callback: () => {
+                if (this.enemies.countActive(true) < 10 && this.start == true) {
+                    if (Phaser.Math.Between(0, 1) == 0) {
+                        this.addApple();
+                    } else {
+                        this.addPeach();
+                    }
+                }
+            }
+        })
 
         // cameras
         this.cameras.main.setBounds(0, 0, this.map.width, this.map.height)
@@ -193,7 +167,6 @@ class Play extends Phaser.Scene {
         this.physics.world.wrap(this.cloud3, this.cloud3.width / 2)
 
 
-
         // jump
         if (Phaser.Input.Keyboard.JustDown(keyUP) && this.chr.body.touching.down) {
             this.chr.body.velocity.y = this.JUMP_VELOCITY
@@ -220,7 +193,7 @@ class Play extends Phaser.Scene {
 
 
         // enemy movement
-        if (this.enemyTimer > 350) {
+        if (this.enemyReactTimer > 350) {
             this.enemies.children.iterate((enemy) => {
                 if (enemy && this.start) {
                     let angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.chr.x, this.chr.y)
@@ -235,9 +208,9 @@ class Play extends Phaser.Scene {
                     // enemy.setVelocityY(Math.sin(angle) * speed)
                 }
             })
-            this.enemyTimer = 0
+            this.enemyReactTimer = 0
         }
-        this.enemyTimer++
+        this.enemyReactTimer++
 
         // update health bar
         this.updateHealthBar()
@@ -256,6 +229,51 @@ class Play extends Phaser.Scene {
         //     this.bgm.stop()
         //     this.scene.start('gameOverScene', { score: this.score })
         // }
+    }
+
+    // functions to create enemies
+    addApple() {
+        for (let i = 0; i < Phaser.Math.Between(2, 6); i++) {
+            let x = Phaser.Math.Between(-500, this.map.width + 500)
+            // reposition if spawn on the character
+            while (x >= this.chr.x - this.spawnRange && x <= this.chr.x + this.spawnRange) {
+                x = Phaser.Math.Between(-500, this.map.width + 500)
+            }
+            let y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
+            let enemy_apple = this.enemies.create(x, y, 'apple').setScale(0.4)
+            enemy_apple.body.setSize(enemy_apple.width * 0.7, enemy_apple.height * 0.8)
+            enemy_apple.body.setOffset((enemy_apple.width - enemy_apple.body.width) / 2, (enemy_apple.height - enemy_apple.body.height))
+            if (Phaser.Math.Between(0, 1) == 0) {
+                enemy_apple.setFlip(true, false)
+            }
+            enemy_apple.setFrame(1)
+            this.time.addEvent({
+                delay: 4500, repeat: 0, callback: () => {
+                    enemy_apple.anims.play('apples')
+                }
+            })
+        }
+    }
+    addPeach(){
+        for (let i = 0; i < Phaser.Math.Between(2, 6); i++) {
+            let x = Phaser.Math.Between(-500, this.map.width + 500)
+            while (x >= this.chr.x - this.spawnRange && x <= this.chr.x + this.spawnRange) {
+                x = Phaser.Math.Between(-500, this.map.width + 500)
+            }
+            let y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
+            let enemy_peach = this.enemies.create(x, y, 'peach').setScale(0.55)
+            enemy_peach.body.setSize(enemy_peach.width * 0.6, enemy_peach.height * 0.8)
+            enemy_peach.body.setOffset((enemy_peach.width - enemy_peach.body.width + 8) / 2, (enemy_peach.height - enemy_peach.body.height))
+            if (Phaser.Math.Between(0, 1) == 0) {
+                enemy_peach.setFlip(true, false)
+            }
+            enemy_peach.setFrame(0)
+            this.time.addEvent({
+                delay: 4500, repeat: 0, callback: () => {
+                    enemy_peach.anims.play('peaches')
+                }
+            })
+        }
     }
 
     // functions for health bar
