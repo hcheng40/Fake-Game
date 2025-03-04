@@ -23,5 +23,5 @@ let config = {
 let game = new Phaser.Game(config)
 
 // keys
-let keyA, keyB, keyUP, keyDOWN, keyLEFT, keyRIGHT
+let keyA, keyB, keyZ, keyUP, keyDOWN, keyLEFT, keyRIGHT
 let mouseX, mouseY, cursors

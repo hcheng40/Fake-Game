@@ -48,16 +48,13 @@ class Menu extends Phaser.Scene {
         this.add.text(game.config.width / 2, game.config.height / 2 + 20, '', menuConfig).setOrigin(0.5)
         this.add.text(game.config.width / 2, game.config.height / 2 + 65, '', menuConfig).setOrigin(0.5)
 
-        keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
-        keyB = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B)
+        this.input.keyboard.on('keydown', () => {
+            game.settings = { gameSpeed: 3 };
+            this.scene.start('playScene');
+        })
     }
 
     update() {
-        if (Phaser.Input.Keyboard.JustDown(keyA) || Phaser.Input.Keyboard.JustDown(keyB)) {
-            game.settings = {
-                gameSpeed: 3
-            }
-            this.scene.start('playScene')
-        }
+
     }
 }

@@ -13,6 +13,7 @@ class Play extends Phaser.Scene {
         this.start = false
         this.justTakeDamage = false
         this.fullHealth = false
+        this.direction = 0  // right
 
         this.score = 0
         this.health = 100
@@ -29,9 +30,12 @@ class Play extends Phaser.Scene {
         // this.bgm.play()
 
         // clouds
-        this.cloud1 = this.add.sprite(this.map.width - 90, this.map.height - 900, 'cloud1').setOrigin(0).setScale(2)
-        this.cloud2 = this.add.sprite(this.map.width - 150, this.map.height - 600, 'cloud2').setOrigin(0).setScale(2.5)
-        this.cloud3 = this.add.sprite(this.map.width - 600, this.map.height - 300, 'cloud3').setOrigin(0).setScale(2.5)
+        this.cloud1 = this.physics.add.sprite(this.map.width - 90, this.map.height - 900, 'cloud1').setScale(3)
+        this.cloud1.body.setAllowGravity(false).setVelocityX(-100)
+        this.cloud2 = this.physics.add.sprite(this.map.width - 150, this.map.height - 600, 'cloud2').setScale(3)
+        this.cloud2.body.setAllowGravity(false).setVelocityX(-170)
+        this.cloud3 = this.physics.add.sprite(this.map.width - 600, this.map.height - 300, 'cloud3').setScale(3)
+        this.cloud3.body.setAllowGravity(false).setVelocityX(-130)
 
         // ground
         this.ground = this.add.group()
@@ -48,7 +52,7 @@ class Play extends Phaser.Scene {
 
         // Create enemy group
         this.enemies = this.physics.add.group()
-        for (let i = 0; i < Phaser.Math.Between(5, 15); i++) {
+        for (let i = 0; i < Phaser.Math.Between(5, 8); i++) {
             let x = Phaser.Math.Between(-500, this.map.width + 500)
             // reposition if spawn on the character
             while (x >= 0 && x <= 500) {
@@ -81,14 +85,13 @@ class Play extends Phaser.Scene {
         this.time.addEvent({ delay: 3500, repeat: 0, callback: () => { this.start = true } })
 
         // health bar
-        this.healthBar = this.add.sprite(this.chr.x - 30, this.chr.y - 30, 'healthbar');
+        this.healthBar = this.add.sprite(0, 0, 'healthbar');
         this.healthBar.setFrame(0);
         this.healthBar.setVisible(false);
         this.updateHealthBar()
 
         // jump key
-        keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
-        keyB = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B)
+        keyZ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z)
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP)
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
@@ -131,85 +134,77 @@ class Play extends Phaser.Scene {
 
     update() {
         if (!this.start) { return }
-        
+
         if (!this.isMoving) {
             this.chr.body.velocity.x = 0
         }
-        
-        // srolling clouds
-        this.cloud1.x -= game.settings.gameSpeed - 2.6
-        this.cloud2.x -= game.settings.gameSpeed - 2.3
-        this.cloud3.x -= game.settings.gameSpeed - 1.9
-        if (this.cloud1.x <= 0 - this.cloud1.width * 15) {
-            this.cloud1.x = this.map.width
-        }
-        if (this.cloud2.x <= 0 - this.cloud2.width * 12) {
-            this.cloud2.x = this.map.width
-        }
-        if (this.cloud3.x <= 0 - this.cloud3.width * 11) {
-            this.cloud3.x = this.map.width
-        }
-        
-        
-        
+
+        // clouds
+        this.physics.world.wrap(this.cloud1, this.cloud1.width/2)
+        this.physics.world.wrap(this.cloud2, this.cloud2.width/2)
+        this.physics.world.wrap(this.cloud3, this.cloud3.width/2)
+
+
+
         // jump
         if (Phaser.Input.Keyboard.JustDown(keyUP) && this.chr.body.touching.down) {
             this.chr.body.velocity.y = this.JUMP_VELOCITY
         }
-        
+
         // duck
         // if (Phaser.Input.Keyboard.JustDown(keyDOWN) && this.chr.body.touching.down) {
-            //     this.chr.body.velocity.y = this.JUMP_VELOCITY
-            // }
-            
-            // left/right movement
-            if (keyLEFT.isDown && keyRIGHT.isDown && !this.isMoving) {
-                this.isMoving = true
-            } else if (keyLEFT.isDown && !this.isMoving) {
-                this.chr.body.velocity.x -= this.MOVE_VELOCITY
-                this.isMoving = true
-            } else if (keyRIGHT.isDown && !this.isMoving) {
-                this.chr.body.velocity.x += this.MOVE_VELOCITY
-                this.isMoving = true
-            }
-            if (!keyLEFT.isDown || !keyRIGHT.isDown) {
-                this.isMoving = false
-            }
-            
-            
-            // enemy movement
-            if (this.enemyTimer > 400) {
-                this.enemies.children.iterate((enemy) => {
-                    if (enemy && this.start) {
-                        let angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.chr.x, this.chr.y)
-                        let speed = 100
-                        enemy.setVelocityX(Math.cos(angle) * speed)
-                        // enemy.setVelocityY(Math.sin(angle) * speed)
-                    }
-                })
-                this.enemyTimer = 0
-            }
-            this.enemyTimer++
-            
-            // update health bar
-            this.updateHealthBar()
+        //     this.chr.body.velocity.y = this.JUMP_VELOCITY
+        // }
 
-            
-            // if (at the edge of the plat) {
-                // enemy.setVelocityY = this.JUMP_VELOCITY
-                // }
-                
-                
-                // gameover
-                // if (this.gameOver) {
-                    //     this.sound.play('sfx-die')
-                    //     this.sound.play('sfx-die2')
-                    //     this.clock.remove()
-                    //     this.bgm.stop()
-                    //     this.scene.start('gameOverScene', { score: this.score })
+        // left/right movement
+        if (keyLEFT.isDown && keyRIGHT.isDown && !this.isMoving) {
+            this.isMoving = true
+        } else if (keyLEFT.isDown && !this.isMoving) {
+            this.chr.body.velocity.x -= this.MOVE_VELOCITY
+            this.isMoving = true
+        } else if (keyRIGHT.isDown && !this.isMoving) {
+            this.chr.body.velocity.x += this.MOVE_VELOCITY
+            this.isMoving = true
+        }
+        if (!keyLEFT.isDown || !keyRIGHT.isDown) {
+            this.isMoving = false
+        }
+
+
+        // enemy movement
+        if (this.enemyTimer > 400) {
+            this.enemies.children.iterate((enemy) => {
+                if (enemy && this.start) {
+                    let angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.chr.x, this.chr.y)
+                    let speed = 100
+                    enemy.setVelocityX(Math.cos(angle) * speed)
+                    // enemy.setVelocityY(Math.sin(angle) * speed)
+                }
+            })
+            this.enemyTimer = 0
+        }
+        this.enemyTimer++
+
+        // update health bar
+        this.updateHealthBar()
+
+
+        // if (at the edge of the plat) {
+        // enemy.setVelocityY = this.JUMP_VELOCITY
+        // }
+
+
+        // gameover
+        // if (this.gameOver) {
+        //     this.sound.play('sfx-die')
+        //     this.sound.play('sfx-die2')
+        //     this.clock.remove()
+        //     this.bgm.stop()
+        //     this.scene.start('gameOverScene', { score: this.score })
         // }
     }
 
+    // functions for health bar
     takeDamage() {
         if (this.health > 0 && this.justTakeDamage == false) {
             this.health -= 25
@@ -223,7 +218,6 @@ class Play extends Phaser.Scene {
             this.gameOver = true
         }
     }
-
     updateHealthBar() {
         if (this.health == 100) {
             this.healthBar.setFrame(0)
