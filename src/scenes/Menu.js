@@ -6,6 +6,7 @@ class Menu extends Phaser.Scene {
     preload() {
         // load images/tile sprites
         this.load.image('map', './assets/map.png')
+        this.load.image('ground', './assets/ground.png')
         this.load.image('cloud1', './assets/cloud1.png')
         this.load.image('cloud2', './assets/cloud2.png')
         this.load.image('cloud3', './assets/cloud3.png')
@@ -27,6 +28,13 @@ class Menu extends Phaser.Scene {
             endFrame: 1
         })
 
+        this.load.spritesheet('peach', './assets/peach.png', {
+            frameWidth: 173,
+            frameHeight: 210,
+            startFrame: 0,
+            endFrame: 1
+        })
+
 
 
         // load audio
@@ -42,7 +50,7 @@ class Menu extends Phaser.Scene {
             fontSize: '34px',
             fontStyle: 'bold',
             // backgroundColor: '#C3B594',
-            color: '#A55424',
+            color: '#FFFFFF',
             align: 'center',
             padding: {
                 top: 10,
@@ -53,7 +61,7 @@ class Menu extends Phaser.Scene {
             fixedWidth: 0
         }
         // display menu text
-        this.add.text(game.config.width / 2, game.config.height / 2 + 20, '', menuConfig).setOrigin(0.5)
+        this.add.text(game.config.width / 2, game.config.height / 2 + 20, 'Press Any Key To Start', menuConfig).setOrigin(0.5)
         this.add.text(game.config.width / 2, game.config.height / 2 + 65, '', menuConfig).setOrigin(0.5)
 
         this.input.keyboard.on('keydown', () => {
