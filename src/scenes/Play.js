@@ -5,7 +5,7 @@ class Play extends Phaser.Scene {
 
     init() {
         // variables and settings
-        this.JUMP_VELOCITY = -1400
+        this.JUMP_VELOCITY = -1200
         this.MOVE_VELOCITY = 400
         this.physics.world.gravity.y = 3500
         this.isMoving = false
@@ -31,10 +31,10 @@ class Play extends Phaser.Scene {
 
         // clouds
         this.cloud1 = this.physics.add.sprite(this.map.width - 90, this.map.height - 900, 'cloud1').setScale(3)
-        this.cloud1.body.setAllowGravity(false).setVelocityX(-100)
         this.cloud2 = this.physics.add.sprite(this.map.width - 150, this.map.height - 600, 'cloud2').setScale(3)
-        this.cloud2.body.setAllowGravity(false).setVelocityX(-170)
         this.cloud3 = this.physics.add.sprite(this.map.width - 600, this.map.height - 300, 'cloud3').setScale(3)
+        this.cloud1.body.setAllowGravity(false).setVelocityX(-100)
+        this.cloud2.body.setAllowGravity(false).setVelocityX(-170)
         this.cloud3.body.setAllowGravity(false).setVelocityX(-130)
 
         // ground
@@ -50,6 +50,14 @@ class Play extends Phaser.Scene {
         this.chr = this.physics.add.sprite(150, this.map.height - 200, '').setScale(2)
         this.chr.body.setCollideWorldBounds(true)
 
+        // enemy animation
+        this.anims.create({
+            key: 'apples',
+            frames: this.anims.generateFrameNumbers('apple', { start: 0, end: 1, first: 0 }),
+            frameRate: 10,
+            repeat: -1
+        })
+
         // Create enemy group
         this.enemies = this.physics.add.group()
         for (let i = 0; i < Phaser.Math.Between(5, 8); i++) {
@@ -59,8 +67,20 @@ class Play extends Phaser.Scene {
                 x = Phaser.Math.Between(-500, this.map.width + 500)
             }
             let y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
-            let enemy = this.enemies.create(x, y, '').setScale(1.5)
+            let enemy = this.enemies.create(x, y, 'apple').setScale(0.4)
+            enemy.body.setSize(enemy.width * 0.7, enemy.height * 0.8)
+            enemy.body.setOffset((enemy.width - enemy.body.width) / 2, (enemy.height - enemy.body.height))
+            if (Phaser.Math.Between(0, 1) == 0) {
+                enemy.setFlip(true, false)
+            }
+            enemy.setFrame(1)
+            this.time.addEvent({
+                delay: 4500, repeat: 0, callback: () => {
+                    enemy.anims.play('apples')
+                }
+            })
         }
+
 
         // cameras
         this.cameras.main.setBounds(0, 0, this.map.width, this.map.height)
@@ -140,9 +160,9 @@ class Play extends Phaser.Scene {
         }
 
         // clouds
-        this.physics.world.wrap(this.cloud1, this.cloud1.width/2)
-        this.physics.world.wrap(this.cloud2, this.cloud2.width/2)
-        this.physics.world.wrap(this.cloud3, this.cloud3.width/2)
+        this.physics.world.wrap(this.cloud1, this.cloud1.width / 2)
+        this.physics.world.wrap(this.cloud2, this.cloud2.width / 2)
+        this.physics.world.wrap(this.cloud3, this.cloud3.width / 2)
 
 
 
@@ -152,9 +172,9 @@ class Play extends Phaser.Scene {
         }
 
         // duck
-        // if (Phaser.Input.Keyboard.JustDown(keyDOWN) && this.chr.body.touching.down) {
-        //     this.chr.body.velocity.y = this.JUMP_VELOCITY
-        // }
+        // if (keyDOWN.isDown && this.chr.body.touching.down) {
+        //     this.chr.body.celocity.x = 0
+        // } else 
 
         // left/right movement
         if (keyLEFT.isDown && keyRIGHT.isDown && !this.isMoving) {
@@ -172,12 +192,18 @@ class Play extends Phaser.Scene {
 
 
         // enemy movement
-        if (this.enemyTimer > 400) {
+        if (this.enemyTimer > 350) {
             this.enemies.children.iterate((enemy) => {
                 if (enemy && this.start) {
                     let angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.chr.x, this.chr.y)
                     let speed = 100
-                    enemy.setVelocityX(Math.cos(angle) * speed)
+                    let v_x = Math.cos(angle) * speed
+                    enemy.setVelocityX(v_x)
+                    if (v_x < 0) {
+                        enemy.setFlip(true, false)
+                    } else if (v_x > 0) {
+                        enemy.resetFlip()
+                    }
                     // enemy.setVelocityY(Math.sin(angle) * speed)
                 }
             })

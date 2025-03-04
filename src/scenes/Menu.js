@@ -20,6 +20,14 @@ class Menu extends Phaser.Scene {
             endFrame: 4
         })
 
+        this.load.spritesheet('apple', './assets/apple.png', {
+            frameWidth: 225,
+            frameHeight: 207,
+            startFrame: 0,
+            endFrame: 1
+        })
+
+
 
         // load audio
         // this.load.audio('', './assets/.wav')
