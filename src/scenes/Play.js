@@ -10,11 +10,12 @@ class Play extends Phaser.Scene {
         this.physics.world.gravity.y = 3500
         this.isMoving = false
         this.isFiring = false
+        this.isDucking = false
         this.start = false
         this.justTakeDamage = false
         this.fullHealth = false
         this.spawnRange = 300
-        this.direction = 0  // right
+        this.direction = 0  // 0: right, 1: left
 
         this.score = 0
         this.health = 100
@@ -47,6 +48,10 @@ class Play extends Phaser.Scene {
             this.ground.add(groundTile)
         }
 
+        // platforms
+        this.plats = this.add.group()
+
+
         // character
         this.chr = this.physics.add.sprite(150, this.map.height - 200, '').setScale(2)
         this.chr.body.setCollideWorldBounds(true)
@@ -64,11 +69,18 @@ class Play extends Phaser.Scene {
             frameRate: 10,
             repeat: -1
         })
+        this.anims.create({
+            key: 'birds',
+            frames: this.anims.generateFrameNumbers('bird', { start: 0, end: 1, first: 0 }),
+            frameRate: 8,
+            repeat: -1
+        })
 
         // Create enemy group
         this.enemies = this.physics.add.group()
         this.addApple()
         this.addPeach()
+        // this.addBird()
 
         this.enemySpawnTimer = this.time.addEvent({
             delay: 3000,
@@ -141,8 +153,10 @@ class Play extends Phaser.Scene {
         // add collider
         this.physics.add.collider(this.chr, this.ground)
         this.physics.add.collider(this.enemies, this.ground)
-        this.physics.add.collider(this.chr, this.enemies, () => { this.takeDamage() })
-
+        // this.physics.add.collider(this.chr, this.enemies, () => { this.takeDamage() })
+  
+        // check if overlap with enemies
+        this.physics.add.overlap(this.chr, this.enemies, () => { this.takeDamage() })
 
         // speed increase after 15 seconds
         // this.clock = this.time.addEvent({ delay: 3000, callback: this.onEvent, callbackScope: this, loop: true })
@@ -174,7 +188,7 @@ class Play extends Phaser.Scene {
 
         // duck
         // if (keyDOWN.isDown && this.chr.body.touching.down) {
-        //     this.chr.body.celocity.x = 0
+        //     this.chr.body.velocity.x = 0
         // } else 
 
         // left/right movement
@@ -183,9 +197,11 @@ class Play extends Phaser.Scene {
         } else if (keyLEFT.isDown && !this.isMoving) {
             this.chr.body.velocity.x -= this.MOVE_VELOCITY
             this.isMoving = true
+            this.direction = 1
         } else if (keyRIGHT.isDown && !this.isMoving) {
             this.chr.body.velocity.x += this.MOVE_VELOCITY
             this.isMoving = true
+            this.direction = 0
         }
         if (!keyLEFT.isDown || !keyRIGHT.isDown) {
             this.isMoving = false
@@ -254,7 +270,7 @@ class Play extends Phaser.Scene {
             })
         }
     }
-    addPeach(){
+    addPeach() {
         for (let i = 0; i < Phaser.Math.Between(2, 6); i++) {
             let x = Phaser.Math.Between(-500, this.map.width + 500)
             while (x >= this.chr.x - this.spawnRange && x <= this.chr.x + this.spawnRange) {
@@ -271,6 +287,38 @@ class Play extends Phaser.Scene {
             this.time.addEvent({
                 delay: 4500, repeat: 0, callback: () => {
                     enemy_peach.anims.play('peaches')
+                }
+            })
+        }
+    }
+    addBird() {
+        for (let i = 0; i < Phaser.Math.Between(1, 3); i++) {
+            let birdPath = this.add.path(this.chr.x - 700, this.chr.y - 500);
+            birdPath.splineTo([
+                { x: this.chr.x - 300, y: this.chr.y - 200 }, // Swoop down
+                { x: this.chr.x + 300, y: this.chr.y - 200 }, // Continue low over chr
+                { x: this.chr.x + 700, y: this.chr.y - 500 }  // Rise back up
+            ])
+            birdPath.draw(graphics)
+            let enemy_bird = this.add.follower(birdPath, this.chr.x - 700, this.chr.y - 500, 'bird').setScale(0.5)
+            this.enemies.add(enemy_bird)
+
+            // Start flight movement
+            enemy_bird.startFollow({
+                duration: Phaser.Math.Between(1800, 2500), // Random speed
+                yoyo: true, // Make it fly back
+                repeat: -1, // Infinite loop
+                rotateToPath: true
+            })
+            enemy_bird.body.setSize(enemy_bird.width * 0.6, enemy_bird.height * 0.8)
+            enemy_bird.body.setOffset((enemy_bird.width - enemy_bird.body.width + 8) / 2, (enemy_bird.height - enemy_bird.body.height))
+            if (Phaser.Math.Between(0, 1) == 0) {
+                enemy_bird.setFlip(true, false)
+            }
+            enemy_bird.setFrame(0)
+            this.time.addEvent({
+                delay: 4500, repeat: 0, callback: () => {
+                    enemy_bird.anims.play('birds')
                 }
             })
         }

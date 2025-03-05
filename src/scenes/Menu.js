@@ -10,6 +10,7 @@ class Menu extends Phaser.Scene {
         this.load.image('cloud1', './assets/cloud1.png')
         this.load.image('cloud2', './assets/cloud2.png')
         this.load.image('cloud3', './assets/cloud3.png')
+        this.load.image('hairdryer', './assets/hairdryer.png')
         
 
 
@@ -31,6 +32,13 @@ class Menu extends Phaser.Scene {
         this.load.spritesheet('peach', './assets/peach.png', {
             frameWidth: 173,
             frameHeight: 210,
+            startFrame: 0,
+            endFrame: 1
+        })
+
+        this.load.spritesheet('bird', './assets/bird.png', {
+            frameWidth: 159,
+            frameHeight: 61,
             startFrame: 0,
             endFrame: 1
         })
