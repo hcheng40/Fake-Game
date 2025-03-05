@@ -51,6 +51,32 @@ class Play extends Phaser.Scene {
 
         // platforms
         this.plats = this.add.group()
+        // for (let i = 0; i < 10; i++) {
+        //     let plat = this.physics.add.sprite(i, this.map.height / 2, 'wood1').setOrigin(0)
+        // }
+
+        // this.plats.create(400, 1400, 'platform').setScale(3, 1).refreshBody();
+        // this.plats.create(1200, 1400, 'platform').setScale(3, 1).refreshBody();
+        // this.plats.create(2000, 1400, 'platform').setScale(3, 1).refreshBody();
+
+        // Floating platforms at various heights
+        this.createPlatform(600, 1200);
+        this.createPlatform(1000, 1100);
+        this.createPlatform(1600, 1000);
+        this.createPlatform(2000, 900);
+        this.createPlatform(2500, 850);
+
+        // More platforms for vertical movement
+        this.createPlatform(800, 800);
+        this.createPlatform(1400, 700);
+        this.createPlatform(1800, 600);
+        this.createPlatform(2300, 550);
+
+        // Higher challenge platforms
+        this.createPlatform(400, 500);
+        this.createPlatform(1000, 400);
+        this.createPlatform(1700, 300);
+        this.createPlatform(2200, 250);
 
 
         // character
@@ -314,16 +340,14 @@ class Play extends Phaser.Scene {
     }
     addBird() {
         for (let i = 0; i < Phaser.Math.Between(1, 1); i++) {
-            let PathStartX = Phaser.Math.Between(700, 1200)
-            let PathStartY = Phaser.Math.Between(300, 600)
-            let birdPath = this.add.path(this.chr.x - PathStartX, this.chr.y - PathStartY)
+            let birdPath = this.add.path(this.chr.x - Phaser.Math.Between(700, 1200), this.chr.y - Phaser.Math.Between(300, 600))
             birdPath.splineTo([
                 { x: this.chr.x - Phaser.Math.Between(50, 150), y: this.chr.y - Phaser.Math.Between(50, 100) },
                 { x: this.chr.x + Phaser.Math.Between(350, 650), y: this.chr.y - Phaser.Math.Between(250, 350) },
                 { x: birdPath.getStartPoint().x + 3000, y: -200 }
             ])
-            let graphics = this.add.graphics().lineStyle(2, 0xFFFFFF, 0.75)
-            birdPath.draw(graphics)
+            // let graphics = this.add.graphics().lineStyle(2, 0xFFFFFF, 0.75)
+            // birdPath.draw(graphics)
             let enemy_bird = this.add.follower(birdPath, birdPath.getStartPoint().x, birdPath.getStartPoint().y, 'bird').setScale(1)
             this.physics.add.existing(enemy_bird)
             enemy_bird.body.moves = false
@@ -377,5 +401,14 @@ class Play extends Phaser.Scene {
                 }
             })
         }
+    }
+
+    // funciton to create platforms
+    createPlatform = (x, y, scaleX = 1, scaleY = 1) => {
+        let plat = this.physics.add.sprite(x, y, 'wood1').setScale(scaleX, scaleY)
+        plat.body.setImmovable(true); // Make sure the platform doesn't move
+        plat.body.allowGravity = false; // Prevent gravity from affecting it
+        this.plats.add(plat)
+        return plat;
     }
 }

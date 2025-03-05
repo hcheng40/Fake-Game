@@ -10,6 +10,11 @@ class Menu extends Phaser.Scene {
         this.load.image('cloud1', './assets/cloud1.png')
         this.load.image('cloud2', './assets/cloud2.png')
         this.load.image('cloud3', './assets/cloud3.png')
+        this.load.image('wood1', './assets/wood1.png')
+        this.load.image('wood2', './assets/wood2.png')
+        this.load.image('pipe1', './assets/pipe1.png')
+        this.load.image('hybrid1', './assets/hybrid1.png')
+        this.load.image('hybrid', './assets/hybrid.png')
         this.load.image('hairdryer', './assets/hairdryer.png')
         
 
