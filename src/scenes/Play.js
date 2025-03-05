@@ -54,7 +54,10 @@ class Play extends Phaser.Scene {
 
 
         // character
-        this.chr = this.physics.add.sprite(150, this.map.height - 200, '').setScale(2)
+        this.chr = this.physics.add.sprite(150, this.map.height - 200, '').setScale(2.5)
+        this.chrBodySizeX = this.chr.width * 0.6
+        this.chrBodySizeY = this.chr.height
+        this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY)
         this.chr.body.setCollideWorldBounds(true)
 
         // enemy animation
@@ -79,21 +82,23 @@ class Play extends Phaser.Scene {
 
         // Create enemy group
         this.enemies = this.physics.add.group()
+        this.enemies_bird = this.physics.add.group()
         this.addApple()
         this.addPeach()
-        // this.addBird()
 
+        // auto spawn enemies
         this.enemySpawnTimer = this.time.addEvent({
-            delay: 3000,
+            delay: 4000,
             loop: true,
             callback: () => {
                 if (this.enemies.countActive(true) < 10 && this.start == true) {
                     if (Phaser.Math.Between(0, 1) == 0) {
-                        this.addApple();
+                        this.addApple()
                     } else {
-                        this.addPeach();
+                        this.addPeach()
                     }
                 }
+                this.addBird()
             }
         })
 
@@ -120,9 +125,9 @@ class Play extends Phaser.Scene {
         this.time.addEvent({ delay: 3500, repeat: 0, callback: () => { this.start = true } })
 
         // health bar
-        this.healthBar = this.add.sprite(0, 0, 'healthbar');
-        this.healthBar.setFrame(0);
-        this.healthBar.setVisible(false);
+        this.healthBar = this.add.sprite(0, 0, 'healthbar')
+        this.healthBar.setFrame(0)
+        this.healthBar.setVisible(false)
         this.updateHealthBar()
 
         // jump key
@@ -154,10 +159,11 @@ class Play extends Phaser.Scene {
         // add collider
         this.physics.add.collider(this.chr, this.ground)
         this.physics.add.collider(this.enemies, this.ground)
-        // this.physics.add.collider(this.chr, this.enemies, () => { this.takeDamage() })
+        this.physics.add.collider(this.chr, this.plats)
 
         // check if overlap with enemies
         this.physics.add.overlap(this.chr, this.enemies, () => { this.takeDamage() })
+        this.physics.add.overlap(this.chr, this.enemies_bird, () => { this.takeDamage() })
 
         // speed increase after 15 seconds
         // this.clock = this.time.addEvent({ delay: 3000, callback: this.onEvent, callbackScope: this, loop: true })
@@ -177,19 +183,10 @@ class Play extends Phaser.Scene {
         this.physics.world.wrap(this.cloud2, this.cloud2.width / 2)
         this.physics.world.wrap(this.cloud3, this.cloud3.width / 2)
 
-
         // jump
-        // if (Phaser.Input.Keyboard.JustDown(keyUP) && this.chr.body.touching.down) {
-        //     this.chr.body.velocity.y = this.JUMP_VELOCITY
-        // }
-
-        if (Phaser.Input.Keyboard.JustDown(keyUP)) {
-            if (this.chr.body.touching.down) {
-                this.chr.body.velocity.y = this.JUMP_VELOCITY
-            } else if (this.canJumpAgain) {
-                this.chr.body.velocity.y = this.JUMP_VELOCITY
-                this.canJumpAgain = false
-            }
+        if (Phaser.Input.Keyboard.JustDown(keyUP) && this.chr.body.touching.down) {
+            this.chr.body.velocity.y = this.JUMP_VELOCITY
+            this.canJumpAgain = false
         }
         if (this.chr.body.touching.down && !keyUP.isDown) {
             this.canJumpAgain = true
@@ -200,15 +197,15 @@ class Play extends Phaser.Scene {
             if (!this.isDucking) {
                 this.isDucking = true
                 // this.chr.setFrame(1)
-                this.chr.body.setSize(this.chr.width, this.chr.height * 0.5)
-                this.chr.body.setOffset(0, this.chr.height * 0.5)
+                this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY * 0.5)
+                this.chr.body.setOffset((this.chr.width - this.chrBodySizeX) / 2, this.chr.height * 0.5)
                 this.chr.body.velocity.x = 0
             }
         } else if (this.isDucking) {
             this.isDucking = false
             // this.chr.setFrame(0)
-            this.chr.body.setSize(this.chr.width, this.chr.height)
-            this.chr.body.setOffset(0, 0)
+            this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY)
+            this.chr.body.setOffset((this.chr.width - this.chrBodySizeX) / 2, 0)
         }
 
         if (!this.isMoving) {
@@ -316,35 +313,28 @@ class Play extends Phaser.Scene {
         }
     }
     addBird() {
-        for (let i = 0; i < Phaser.Math.Between(1, 3); i++) {
-            let birdPath = this.add.path(this.chr.x - 700, this.chr.y - 500)
+        for (let i = 0; i < Phaser.Math.Between(1, 1); i++) {
+            let PathStartX = Phaser.Math.Between(700, 1200)
+            let PathStartY = Phaser.Math.Between(300, 600)
+            let birdPath = this.add.path(this.chr.x - PathStartX, this.chr.y - PathStartY)
             birdPath.splineTo([
-                { x: this.chr.x - 300, y: this.chr.y - 200 }, // Swoop down
-                { x: this.chr.x + 300, y: this.chr.y - 200 }, // Continue low over chr
-                { x: this.chr.x + 700, y: this.chr.y - 500 }  // Rise back up
+                { x: this.chr.x - Phaser.Math.Between(50, 150), y: this.chr.y - Phaser.Math.Between(50, 100) },
+                { x: this.chr.x + Phaser.Math.Between(350, 650), y: this.chr.y - Phaser.Math.Between(250, 350) },
+                { x: birdPath.getStartPoint().x + 3000, y: -200 }
             ])
+            let graphics = this.add.graphics().lineStyle(2, 0xFFFFFF, 0.75)
             birdPath.draw(graphics)
-            let enemy_bird = this.add.follower(birdPath, this.chr.x - 700, this.chr.y - 500, 'bird').setScale(0.5)
-            this.enemies.add(enemy_bird)
-
-            // Start flight movement
+            let enemy_bird = this.add.follower(birdPath, birdPath.getStartPoint().x, birdPath.getStartPoint().y, 'bird').setScale(1)
+            this.physics.add.existing(enemy_bird)
+            enemy_bird.body.moves = false
+            enemy_bird.body.setSize(enemy_bird.width * 0.9, enemy_bird.height * 0.8)
+            this.enemies_bird.add(enemy_bird)
             enemy_bird.startFollow({
-                duration: Phaser.Math.Between(1800, 2500), // Random speed
-                yoyo: true, // Make it fly back
-                repeat: -1, // Infinite loop
-                rotateToPath: true
+                duration: Phaser.Math.Between(4000, 6000),
+                rotateToPath: true,
+                onComplete: () => { enemy_bird.destroy() }
             })
-            enemy_bird.body.setSize(enemy_bird.width * 0.6, enemy_bird.height * 0.8)
-            enemy_bird.body.setOffset((enemy_bird.width - enemy_bird.body.width + 8) / 2, (enemy_bird.height - enemy_bird.body.height))
-            if (Phaser.Math.Between(0, 1) == 0) {
-                enemy_bird.setFlip(true, false)
-            }
-            enemy_bird.setFrame(0)
-            this.time.addEvent({
-                delay: 4500, repeat: 0, callback: () => {
-                    enemy_bird.anims.play('birds')
-                }
-            })
+            enemy_bird.anims.play('birds')
         }
     }
 
@@ -358,6 +348,8 @@ class Play extends Phaser.Scene {
             console.log("hit")
             this.justTakeDamage = true
             this.time.addEvent({ delay: 2000, repeat: 0, callback: () => { this.justTakeDamage = false } })
+            this.chr.setTint(0xFF0000)
+            this.time.addEvent({ delay: 300, callback: () => { this.chr.clearTint() } })
         } else if (this.health <= 0) {
             this.gameOver = true
         }
