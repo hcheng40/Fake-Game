@@ -11,6 +11,7 @@ class Play extends Phaser.Scene {
         this.isMoving = false
         this.isFiring = false
         this.isDucking = false
+        this.canJumpAgain = false
         this.start = false
         this.justTakeDamage = false
         this.fullHealth = false
@@ -154,7 +155,7 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.chr, this.ground)
         this.physics.add.collider(this.enemies, this.ground)
         // this.physics.add.collider(this.chr, this.enemies, () => { this.takeDamage() })
-  
+
         // check if overlap with enemies
         this.physics.add.overlap(this.chr, this.enemies, () => { this.takeDamage() })
 
@@ -171,10 +172,6 @@ class Play extends Phaser.Scene {
     update() {
         if (!this.start) { return }
 
-        if (!this.isMoving) {
-            this.chr.body.velocity.x = 0
-        }
-
         // clouds
         this.physics.world.wrap(this.cloud1, this.cloud1.width / 2)
         this.physics.world.wrap(this.cloud2, this.cloud2.width / 2)
@@ -182,23 +179,50 @@ class Play extends Phaser.Scene {
 
 
         // jump
-        if (Phaser.Input.Keyboard.JustDown(keyUP) && this.chr.body.touching.down) {
-            this.chr.body.velocity.y = this.JUMP_VELOCITY
+        // if (Phaser.Input.Keyboard.JustDown(keyUP) && this.chr.body.touching.down) {
+        //     this.chr.body.velocity.y = this.JUMP_VELOCITY
+        // }
+
+        if (Phaser.Input.Keyboard.JustDown(keyUP)) {
+            if (this.chr.body.touching.down) {
+                this.chr.body.velocity.y = this.JUMP_VELOCITY
+            } else if (this.canJumpAgain) {
+                this.chr.body.velocity.y = this.JUMP_VELOCITY
+                this.canJumpAgain = false
+            }
+        }
+        if (this.chr.body.touching.down && !keyUP.isDown) {
+            this.canJumpAgain = true
         }
 
         // duck
-        // if (keyDOWN.isDown && this.chr.body.touching.down) {
-        //     this.chr.body.velocity.x = 0
-        // } else 
+        if (keyDOWN.isDown && this.chr.body.touching.down) {
+            if (!this.isDucking) {
+                this.isDucking = true
+                // this.chr.setFrame(1)
+                this.chr.body.setSize(this.chr.width, this.chr.height * 0.5)
+                this.chr.body.setOffset(0, this.chr.height * 0.5)
+                this.chr.body.velocity.x = 0
+            }
+        } else if (this.isDucking) {
+            this.isDucking = false
+            // this.chr.setFrame(0)
+            this.chr.body.setSize(this.chr.width, this.chr.height)
+            this.chr.body.setOffset(0, 0)
+        }
+
+        if (!this.isMoving) {
+            this.chr.body.velocity.x = 0
+        }
 
         // left/right movement
-        if (keyLEFT.isDown && keyRIGHT.isDown && !this.isMoving) {
+        if (keyLEFT.isDown && keyRIGHT.isDown && !this.isMoving && !this.isDucking) {
             this.isMoving = true
-        } else if (keyLEFT.isDown && !this.isMoving) {
+        } else if (keyLEFT.isDown && !this.isMoving && !this.isDucking) {
             this.chr.body.velocity.x -= this.MOVE_VELOCITY
             this.isMoving = true
             this.direction = 1
-        } else if (keyRIGHT.isDown && !this.isMoving) {
+        } else if (keyRIGHT.isDown && !this.isMoving && !this.isDucking) {
             this.chr.body.velocity.x += this.MOVE_VELOCITY
             this.isMoving = true
             this.direction = 0
@@ -293,7 +317,7 @@ class Play extends Phaser.Scene {
     }
     addBird() {
         for (let i = 0; i < Phaser.Math.Between(1, 3); i++) {
-            let birdPath = this.add.path(this.chr.x - 700, this.chr.y - 500);
+            let birdPath = this.add.path(this.chr.x - 700, this.chr.y - 500)
             birdPath.splineTo([
                 { x: this.chr.x - 300, y: this.chr.y - 200 }, // Swoop down
                 { x: this.chr.x + 300, y: this.chr.y - 200 }, // Continue low over chr
