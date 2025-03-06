@@ -42,19 +42,33 @@ class Select extends Phaser.Scene {
             this.characterTexts.push(charTextConfig)
         })
 
-        // text at the bottom
         this.selectConfig.fontSize = '40px'
-        this.add.text(game.config.width / 2, 850, 'Press Z to Start', this.selectConfig).setOrigin(0.5)
+        this.textAdded = false
+
 
         // select
         this.input.keyboard.on('keydown-UP', () => { this.changeSelection(-1) })
         this.input.keyboard.on('keydown-DOWN', () => { this.changeSelection(1) })
 
-        // start game
+        // start play scene
         this.input.keyboard.on('keydown-Z', () => {
-            game.selectedCharacter = this.characters[this.Index].key
-            this.scene.start('playScene')
+            if (this.firstSelect) {
+                game.selectedCharacter = this.characters[this.Index].key
+                if (game.selectedCharacter == 'apple') {
+                    game.gameMode = 'Mode1'
+                } else if (game.selectedCharacter == 'peach') {
+                    game.gameMode = 'Mode2'
+                }
+                this.scene.start('playScene')
+            }
         })
+    }
+
+    update() {
+        if (this.firstSelect && !this.textAdded) {
+            this.textAdded = true
+            this.add.text(game.config.width / 2, 850, 'Press Z to Start', this.selectConfig).setOrigin(0.5)
+        }
     }
 
     // function for changing character selection
