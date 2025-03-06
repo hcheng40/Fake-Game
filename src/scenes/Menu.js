@@ -74,12 +74,12 @@ class Menu extends Phaser.Scene {
             fixedWidth: 0
         }
         // display menu text
-        this.add.text(game.config.width / 2, game.config.height / 2 + 20, 'Press Any Key To Start', menuConfig).setOrigin(0.5)
+        this.add.text(game.config.width / 2, game.config.height / 2 + 20, 'Press Any Key To Continue', menuConfig).setOrigin(0.5)
         this.add.text(game.config.width / 2, game.config.height / 2 + 65, '', menuConfig).setOrigin(0.5)
 
         this.input.keyboard.on('keydown', () => {
             game.settings = { gameSpeed: 3 };
-            this.scene.start('playScene');
+            this.scene.start('selectScene');
         })
     }
 

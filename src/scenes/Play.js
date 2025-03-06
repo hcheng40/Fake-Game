@@ -21,7 +21,7 @@ class Play extends Phaser.Scene {
         this.score = 0
         this.health = 100
         this.gameOver = false
-        this.enemyReactTimer = 200
+        this.enemyReactTimer = 145
     }
 
     create() {
@@ -33,7 +33,7 @@ class Play extends Phaser.Scene {
         // this.bgm.play()
 
         // clouds
-        this.cloud1 = this.physics.add.sprite(this.map.width - 90, this.map.height - 900, 'cloud1').setScale(3)
+        this.cloud1 = this.physics.add.sprite(this.map.width - 90, this.map.height - 900, 'cloud1').setScale(2.5)
         this.cloud2 = this.physics.add.sprite(this.map.width - 150, this.map.height - 600, 'cloud2').setScale(3)
         this.cloud3 = this.physics.add.sprite(this.map.width - 600, this.map.height - 300, 'cloud3').setScale(3)
         this.cloud1.body.setAllowGravity(false).setVelocityX(-100)
@@ -55,28 +55,25 @@ class Play extends Phaser.Scene {
         //     let plat = this.physics.add.sprite(i, this.map.height / 2, 'wood1').setOrigin(0)
         // }
 
-        // this.plats.create(400, 1400, 'platform').setScale(3, 1).refreshBody();
-        // this.plats.create(1200, 1400, 'platform').setScale(3, 1).refreshBody();
-        // this.plats.create(2000, 1400, 'platform').setScale(3, 1).refreshBody();
+        // low
+        this.createPlatform(300, 1350, 'wood2')
+        this.createPlatform(600, 1200, 'wood2')
+        this.createPlatform(1000, 1100, 'wood2')
+        this.createPlatform(1500, 1000, 'wood2')
+        this.createPlatform(2000, 900, 'wood2')
+        this.createPlatform(2500, 850, 'wood2')
 
-        // Floating platforms at various heights
-        this.createPlatform(600, 1200);
-        this.createPlatform(1000, 1100);
-        this.createPlatform(1600, 1000);
-        this.createPlatform(2000, 900);
-        this.createPlatform(2500, 850);
+        // mid
+        this.createPlatform(800, 800, 'hybrid', 0.5)
+        this.createPlatform(1400, 700, 'hybrid', 0.5)
+        this.createPlatform(1800, 600, 'hybrid', 0.5)
+        this.createPlatform(2300, 550, 'hybrid', 0.5)
 
-        // More platforms for vertical movement
-        this.createPlatform(800, 800);
-        this.createPlatform(1400, 700);
-        this.createPlatform(1800, 600);
-        this.createPlatform(2300, 550);
-
-        // Higher challenge platforms
-        this.createPlatform(400, 500);
-        this.createPlatform(1000, 400);
-        this.createPlatform(1700, 300);
-        this.createPlatform(2200, 250);
+        // high
+        this.createPlatform(400, 500, 'pipe1')
+        this.createPlatform(1000, 400, 'pipe1')
+        this.createPlatform(1700, 300, 'pipe1')
+        this.createPlatform(2200, 250, 'pipe1')
 
 
         // character
@@ -109,11 +106,11 @@ class Play extends Phaser.Scene {
         // Create enemy group
         this.enemies = this.physics.add.group()
         this.enemies_bird = this.physics.add.group()
-        this.addApple()
-        this.addPeach()
+        this.addApple(true)
+        this.addPeach(true)
 
         // auto spawn enemies
-        this.enemySpawnTimer = this.time.addEvent({
+        this.time.addEvent({
             delay: 4000,
             loop: true,
             callback: () => {
@@ -124,9 +121,14 @@ class Play extends Phaser.Scene {
                         this.addPeach()
                     }
                 }
-                this.addBird()
             }
         })
+        this.time.addEvent({
+            delay: 6000,
+            loop: true,
+            callback: () => { this.addBird() }
+        })
+
 
         // cameras
         this.cameras.main.setBounds(0, 0, this.map.width, this.map.height)
@@ -151,10 +153,7 @@ class Play extends Phaser.Scene {
         this.time.addEvent({ delay: 3500, repeat: 0, callback: () => { this.start = true } })
 
         // health bar
-        this.healthBar = this.add.sprite(0, 0, 'healthbar')
-        this.healthBar.setFrame(0)
-        this.healthBar.setVisible(false)
-        this.updateHealthBar()
+        this.healthBar = this.add.sprite(0, 0, 'healthbar').setFrame(0).setVisible(false)
 
         // jump key
         keyZ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z)
@@ -186,6 +185,7 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.chr, this.ground)
         this.physics.add.collider(this.enemies, this.ground)
         this.physics.add.collider(this.chr, this.plats)
+        this.physics.add.collider(this.enemies, this.plats)
 
         // check if overlap with enemies
         this.physics.add.overlap(this.chr, this.enemies, () => { this.takeDamage() })
@@ -255,12 +255,12 @@ class Play extends Phaser.Scene {
         }
 
 
-        // enemy movement
-        if (this.enemyReactTimer > 350) {
+        // enemy X movement
+        if (this.enemyReactTimer > 150) {
             this.enemies.children.iterate((enemy) => {
                 if (enemy && this.start) {
                     let angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.chr.x, this.chr.y)
-                    let speed = 100
+                    let speed = 120
                     let v_x = Math.cos(angle) * speed
                     enemy.setVelocityX(v_x)
                     if (v_x < 0) {
@@ -268,21 +268,36 @@ class Play extends Phaser.Scene {
                     } else if (v_x > 0) {
                         enemy.resetFlip()
                     }
-                    // enemy.setVelocityY(Math.sin(angle) * speed)
                 }
             })
             this.enemyReactTimer = 0
         }
         this.enemyReactTimer++
 
-        // update health bar
-        this.updateHealthBar()
+        this.enemies.children.iterate((enemy) => {
+            if (enemy && this.start) {
+                let justCollide = false
+                // let edgeCheckX = enemy.x + (enemy.body.velocity.x > 0 ? 15 : -15); // Check forward
+                // let edgeCheckY = enemy.y + 20; // Check slightly below enemy
+                // let frontCheckX = enemy.x + (enemy.body.velocity.x > 0 ? 20 : -20); // Slightly ahead
 
+                // let onEdge = !this.plats.children.entries.some(plat =>
+                //     plat.getBounds().contains(edgeCheckX, edgeCheckY)
+                // );
 
-        // if (at the edge of the plat) {
-        // enemy.setVelocityY = this.JUMP_VELOCITY
-        // }
+                // let platformAhead = this.plats.children.entries.some(plat =>
+                //     plat.getBounds().contains(frontCheckX, enemy.y)
+                // );
 
+                // if ((onEdge || platformAhead) && enemy.body.touching.down) {
+                //     enemy.setVelocityY(this.JUMP_VELOCITY + 250);
+                // }
+            }
+        })
+
+        // health bar follows the character
+        this.healthBar.x = this.chr.x - 70
+        this.healthBar.y = this.chr.y - 50
 
         // gameover
         // if (this.gameOver) {
@@ -294,8 +309,21 @@ class Play extends Phaser.Scene {
         // }
     }
 
+
+    // funciton to create platforms
+    createPlatform(x, y, key, scale = 0.8) {
+        let plat = this.physics.add.sprite(x, y, key).setScale(scale)
+        plat.body.setImmovable(true)
+        plat.body.allowGravity = false
+        plat.body.checkCollision.down = false
+        plat.body.checkCollision.left = false
+        plat.body.checkCollision.right = false
+        this.plats.add(plat)
+        return plat
+    }
+
     // functions to create enemies
-    addApple() {
+    addApple(init = false) {
         for (let i = 0; i < Phaser.Math.Between(2, 6); i++) {
             let x = Phaser.Math.Between(-500, this.map.width + 500)
             // reposition if spawn on the character
@@ -310,14 +338,18 @@ class Play extends Phaser.Scene {
                 enemy_apple.setFlip(true, false)
             }
             enemy_apple.setFrame(1)
-            this.time.addEvent({
-                delay: 4500, repeat: 0, callback: () => {
-                    enemy_apple.anims.play('apples')
-                }
-            })
+            if (init == true) {
+                this.time.addEvent({
+                    delay: 4500, repeat: 0, callback: () => {
+                        enemy_apple.anims.play('apples')
+                    }
+                })
+            } else {
+                enemy_apple.anims.play('apples')
+            }
         }
     }
-    addPeach() {
+    addPeach(init = false) {
         for (let i = 0; i < Phaser.Math.Between(2, 6); i++) {
             let x = Phaser.Math.Between(-500, this.map.width + 500)
             while (x >= this.chr.x - this.spawnRange && x <= this.chr.x + this.spawnRange) {
@@ -330,20 +362,24 @@ class Play extends Phaser.Scene {
             if (Phaser.Math.Between(0, 1) == 0) {
                 enemy_peach.setFlip(true, false)
             }
-            enemy_peach.setFrame(0)
-            this.time.addEvent({
-                delay: 4500, repeat: 0, callback: () => {
-                    enemy_peach.anims.play('peaches')
-                }
-            })
+            enemy_peach.setFrame(1)
+            if (init == true) {
+                this.time.addEvent({
+                    delay: 4500, repeat: 0, callback: () => {
+                        enemy_peach.anims.play('peaches')
+                    }
+                })
+            } else {
+                enemy_peach.anims.play('peaches')
+            }
         }
     }
     addBird() {
         for (let i = 0; i < Phaser.Math.Between(1, 1); i++) {
             let birdPath = this.add.path(this.chr.x - Phaser.Math.Between(700, 1200), this.chr.y - Phaser.Math.Between(300, 600))
             birdPath.splineTo([
-                { x: this.chr.x - Phaser.Math.Between(50, 150), y: this.chr.y - Phaser.Math.Between(50, 100) },
-                { x: this.chr.x + Phaser.Math.Between(350, 650), y: this.chr.y - Phaser.Math.Between(250, 350) },
+                { x: this.chr.x - Phaser.Math.Between(50, 150), y: this.chr.y - Phaser.Math.Between(50, 80) },
+                { x: this.chr.x + Phaser.Math.Between(350, 650), y: this.chr.y - Phaser.Math.Between(100, 400) },
                 { x: birdPath.getStartPoint().x + 3000, y: -200 }
             ])
             // let graphics = this.add.graphics().lineStyle(2, 0xFFFFFF, 0.75)
@@ -366,7 +402,17 @@ class Play extends Phaser.Scene {
     takeDamage() {
         if (this.health > 0 && this.justTakeDamage == false) {
             this.health -= 25
-            this.updateHealthBar()
+            if (this.health == 100) {
+                this.healthBar.setFrame(0)
+            } else if (this.health == 75) {
+                this.healthBar.setFrame(1)
+            } else if (this.health == 50) {
+                this.healthBar.setFrame(2)
+            } else if (this.health == 25) {
+                this.healthBar.setFrame(3)
+            } else if (this.health == 0) {
+                this.healthBar.setFrame(4)
+            }
             this.healthBar.setVisible(true)
             this.time.addEvent({ delay: 2000, repeat: 0, callback: () => { this.healthBar.setVisible(false) } })
             console.log("hit")
@@ -378,37 +424,15 @@ class Play extends Phaser.Scene {
             this.gameOver = true
         }
     }
-    updateHealthBar() {
-        if (this.health == 100) {
-            this.healthBar.setFrame(0)
-        } else if (this.health == 75) {
-            this.healthBar.setFrame(1)
-        } else if (this.health == 50) {
-            this.healthBar.setFrame(2)
-        } else if (this.health == 25) {
-            this.healthBar.setFrame(3)
-        } else if (this.health == 0) {
-            this.healthBar.setFrame(4)
-        }
-        this.healthBar.x = this.chr.x - 70
-        this.healthBar.y = this.chr.y - 50
-        if (this.health >= 100 && this.fullHealth == true) {
-            this.fullHealth = false
-            this.time.addEvent({
-                delay: 1000, repeat: 0, callback: () => {
-                    this.healthBarBackground.setVisible(false)
-                    this.healthBarFill.setVisible(false)
-                }
-            })
-        }
-    }
-
-    // funciton to create platforms
-    createPlatform = (x, y, scaleX = 1, scaleY = 1) => {
-        let plat = this.physics.add.sprite(x, y, 'wood1').setScale(scaleX, scaleY)
-        plat.body.setImmovable(true); // Make sure the platform doesn't move
-        plat.body.allowGravity = false; // Prevent gravity from affecting it
-        this.plats.add(plat)
-        return plat;
-    }
+    // updateHealthBar() {
+    //     if (this.health >= 100 && this.fullHealth == true) {
+    //         this.fullHealth = false
+    //         this.time.addEvent({
+    //             delay: 1000, repeat: 0, callback: () => {
+    //                 this.healthBarBackground.setVisible(false)
+    //                 this.healthBarFill.setVisible(false)
+    //             }
+    //         })
+    //     }
+    // }
 }
