@@ -16,8 +16,9 @@ class Select extends Phaser.Scene {
 
         // character list
         this.characters = [
-            { key: 'apple', name: 'Apple' },    // index 0
-            { key: 'peach', name: 'Peach' },    // index 1
+            { key: 'apple', name: 'Phineas' },    // index 0
+            { key: 'peach', name: '' },           // index 1
+            { key: 'bird', name: 'Candace' },     // index 2
             // add new characters here
         ]
         this.Index = 0
@@ -54,9 +55,9 @@ class Select extends Phaser.Scene {
         this.input.keyboard.on('keydown-Z', () => {
             if (this.firstSelect) {
                 game.selectedCharacter = this.characters[this.Index].key
-                if (game.selectedCharacter == 'apple') {
+                if (game.selectedCharacter == 'apple' || game.selectedCharacter == 'peach') {
                     game.gameMode = 'Mode1'
-                } else if (game.selectedCharacter == 'peach') {
+                } else if (game.selectedCharacter == 'bird') {
                     game.gameMode = 'Mode2'
                 }
                 this.scene.start('playScene')

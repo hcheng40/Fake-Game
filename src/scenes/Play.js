@@ -17,9 +17,10 @@ class Play extends Phaser.Scene {
         this.justTakeDamage = false
         this.fullHealth = false
         this.spawnRange = 300
-        this.direction = 0  // 0: right, 1: left
+        this.direction = 1  // 1: facing right, -1: facing left
         this.enemySpeed = 120
 
+        this.timeleft = 0
         this.score = 0
         this.health = 100
         this.gameOver = false
@@ -27,15 +28,30 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        // time remaining
+        let textConfig = {
+            fontFamily: 'Courier',
+            fontSize: '60px',
+            fontStyle: 'bold',
+            backgroundColor: '#C18361',
+            color: '#342020',
+            align: 'center',
+            padding: {
+                top: 5,
+                bottom: 5,
+                left: 10,
+                right: 10
+            },
+            fixedWidth: 100,
+            fixedHeight: 60
+        }
+        this.textBorder = this.add.rectangle(game.config.width / 2, 50, textConfig.fixedWidth + 15, textConfig.fixedHeight + 15, '0x5C4033').setOrigin(0.5).setDepth(2).setScrollFactor(0)
+
         // different game mode
         if (game.gameMode == 'Mode1') {
 
             // background
             this.map = this.add.image(0, 0, 'map').setOrigin(0)
-
-            // bgm
-            // this.bgm = this.sound.add('bgm', { loop: true })
-            // this.bgm.play()
 
             // platforms
             this.plats = this.add.group()
@@ -59,16 +75,46 @@ class Play extends Phaser.Scene {
 
 
             // character
-            this.chr = this.physics.add.sprite(150, this.map.height - 200, '').setScale(2.5).setDepth(2)
+            this.chr = this.physics.add.sprite(150, this.map.height - 200, '').setScale(2.5).setDepth(5)
             this.chrBodySizeX = this.chr.width * 0.6
             this.chrBodySizeY = this.chr.height
             this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
 
+            // play clock count down
+            this.timeLeft = 60
+            this.timeText = this.add.text(game.config.width / 2, 50, this.timeLeft, textConfig).setOrigin(0.5).setDepth(3).setScrollFactor(0)
+            this.clock = this.time.addEvent({
+                delay: 1000,
+                callback: () => { if (this.start) {this.timeLeft-- }},
+                callbackScope: this,
+                repeat: -1
+            })
+
         } else if (game.gameMode == 'Mode2') {
-            // codes
+            // background
+            // this.map = this.add.image(0, 0, 'map2').setOrigin(0)
+
+            // platforms
+            this.plats = this.add.group()
+
+
+            // character
+            this.chr = this.physics.add.sprite(150, this.map.height - 200, game.selectedCharacter).setScale(2.5).setDepth(5)
+            this.chrBodySizeX = this.chr.width * 0.6
+            this.chrBodySizeY = this.chr.height
+            this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
+
+            // laser group
+            this.lasers = createLasers()
+
+
         } else {
             console.log('Hacker')
         }
+
+        // bgm
+        // this.bgm = this.sound.add('bgm', { loop: true })
+        // this.bgm.play()
 
         // clouds
         this.cloud1 = this.physics.add.sprite(this.map.width - 90, this.map.height - 900, 'cloud1').setScale(2.5).setDepth(0)
@@ -110,8 +156,8 @@ class Play extends Phaser.Scene {
         // Create enemy group
         this.enemies = this.physics.add.group()
         this.enemies_bird = this.physics.add.group()
-        this.addApple(game.gameMode, true)
-        this.addPeach(game.gameMode, true)
+        this.addApple(game.gameMode)
+        this.addPeach(game.gameMode)
 
         // auto spawn enemies
         if (game.gameMode == 'Mode1') {
@@ -120,7 +166,7 @@ class Play extends Phaser.Scene {
             this.numEnemy = 20
         }
         this.time.addEvent({
-            delay: 4000,
+            delay: 2000,
             loop: true,
             callback: () => {
                 if (this.enemies.countActive(true) < this.numEnemy && this.start == true) {
@@ -169,23 +215,6 @@ class Play extends Phaser.Scene {
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
 
-        // score text
-        let scoreConfig = {
-            fontFamily: 'Courier',
-            fontSize: '40px',
-            fontStyle: 'bold',
-            backgroundColor: '#C18361',
-            color: '#342020',
-            align: 'right',
-            padding: {
-                top: 5,
-                bottom: 5,
-            },
-            fixedWidth: 150
-        }
-        // this.scoreText = this.add.text(15, 15, this.score, scoreConfig).setDepth(1)
-        // this.scoreTextBorder = this.add.rectangle(8, 8, scoreConfig.fixedWidth + 14, 64, 0x5C4033).setOrigin(0).setDepth(0)
-
         // add collider
         this.physics.add.collider(this.chr, this.ground)
         this.physics.add.collider(this.enemies, this.ground)
@@ -208,7 +237,11 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        if (!this.start) { return }
+        if (!this.start) {
+            return
+        } else {
+            this.enemies.children.iterate((enemy) => { enemy.body.moves = true })
+        }
 
         // clouds
         this.physics.world.wrap(this.cloud1, this.cloud1.width / 2)
@@ -219,6 +252,7 @@ class Play extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(keyUP) && this.chr.body.touching.down) {
             this.chr.body.velocity.y = this.JUMP_VELOCITY
             this.canJumpAgain = false
+            this.sound.play('jump-sfx')
         }
         if (this.chr.body.touching.down && !keyUP.isDown) {
             this.canJumpAgain = true
@@ -252,11 +286,11 @@ class Play extends Phaser.Scene {
         } else if (keyLEFT.isDown && !this.isMoving && !this.isDucking) {
             this.chr.body.velocity.x -= this.MOVE_VELOCITY
             this.isMoving = true
-            this.direction = 1
+            this.direction = -1
         } else if (keyRIGHT.isDown && !this.isMoving && !this.isDucking) {
             this.chr.body.velocity.x += this.MOVE_VELOCITY
             this.isMoving = true
-            this.direction = 0
+            this.direction = 1
         }
         if (!keyLEFT.isDown || !keyRIGHT.isDown) {
             this.isMoving = false
@@ -264,13 +298,8 @@ class Play extends Phaser.Scene {
 
         // enemy movement
         if (game.gameMode == 'Mode1') {
-            if (this.start) {
-                this.enemies.children.iterate((enemy) => {
-                    enemy.body.moves = true
-                })
-            }
-
-            // destroy enemy that out of the map
+            this.timeText.text = Math.floor(this.timeLeft)
+            // destroy enemy outside the map
             this.enemies.children.iterate((enemy) => {
                 if (enemy && this.start) {
                     if (enemy.x >= this.map.width + 100 || enemy.x <= -100) {
@@ -278,7 +307,23 @@ class Play extends Phaser.Scene {
                     }
                 }
             })
+            if (this.timeLeft <= 0) {
+                // win
+            }
         } else if (game.gameMode == 'Mode2') {
+            // shooting
+            if (Phaser.Input.Keyboard.JustDown(keyZ)) {
+                fire(this.chr.x, this.chr.y, this.direction)
+            }
+
+            // reset laser
+            this.lasers.children.iterate((laser) => {
+                if (laser.x <= -50 || laser.x >= 50) {
+                    laser.setActive(false)
+                    laser.setVisible(false)
+                }
+            })
+
             // enemy X movement
             if (this.enemyReactTimer > 150) {
                 this.enemies.children.iterate((enemy) => {
@@ -348,7 +393,7 @@ class Play extends Phaser.Scene {
     }
 
     // functions to create enemies
-    addApple(mode, init = false) {
+    addApple(mode) {
         for (let i = 0; i < Phaser.Math.Between(2, 6); i++) {
             let x = Phaser.Math.Between(-500, this.map.width + 500)
             // reposition if spawn on the character
@@ -362,7 +407,7 @@ class Play extends Phaser.Scene {
                 y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
             }
             let enemy_apple = this.enemies.create(x, y, 'apple').setScale(0.4)
-            enemy_apple.body.setSize(enemy_apple.width * 0.7, enemy_apple.height * 0.8)
+            enemy_apple.body.setSize(enemy_apple.width * 0.6, enemy_apple.height * 0.8)
             enemy_apple.body.setOffset((enemy_apple.width - enemy_apple.body.width) / 2, (enemy_apple.height - enemy_apple.body.height))
             if (Phaser.Math.Between(0, 1) == 0) {
                 enemy_apple.setFlip(true, false)
@@ -380,7 +425,7 @@ class Play extends Phaser.Scene {
             }
         }
     }
-    addPeach(mode, init = false) {
+    addPeach(mode) {
         for (let i = 0; i < Phaser.Math.Between(2, 6); i++) {
             let x = Phaser.Math.Between(-500, this.map.width + 500)
             while (x >= this.chr.x - this.spawnRange && x <= this.chr.x + this.spawnRange) {
@@ -461,15 +506,31 @@ class Play extends Phaser.Scene {
             this.gameOver = true
         }
     }
-    // updateHealthBar() {
-    //     if (this.health >= 100 && this.fullHealth == true) {
-    //         this.fullHealth = false
-    //         this.time.addEvent({
-    //             delay: 1000, repeat: 0, callback: () => {
-    //                 this.healthBarBackground.setVisible(false)
-    //                 this.healthBarFill.setVisible(false)
-    //             }
-    //         })
-    //     }
-    // }
+
+    // funciton to create lasers
+    createLasers() {
+        let lasers = this.physics.add.group({
+            classType: Phaser.Physics.Arcade.Sprite,
+            maxSize: 20
+        })
+
+        for (let i = 0; i < lasers.maxSize; i++) {
+            let laser = this.physics.add.sprite(-500, -500, '')
+            laser.setActive(false)
+            laser.setVisible(false)
+            lasers.add(laser)
+        }
+        return lasers
+    }
+
+    // fire function
+    fire(x, y, direction) {
+        let laser = this.lasers.getFirstDead(false)
+        if (laser) {
+            laser.body.reset(x, y)
+            laser.setActive(true)
+            laser.setVisible(true)
+            laser.setVelocityX(direction * 300)
+        }
+    }
 }

@@ -51,7 +51,7 @@ class Menu extends Phaser.Scene {
 
 
         // load audio
-        // this.load.audio('', './assets/.wav')
+        this.load.audio('jump-sfx', './assets/jump.wav')
     }
 
     create() {
