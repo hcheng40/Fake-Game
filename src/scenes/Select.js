@@ -77,11 +77,9 @@ class Select extends Phaser.Scene {
             this.Index = 0
             this.firstSelect = true
             this.chrImage = this.add.sprite(450, 500, this.characters[this.Index].key).setScale(0.75)
-            this.chrImage.setFrame(10)
         } else {
             this.Index = Phaser.Math.Wrap(this.Index + keyPressed, 0, this.characters.length)
             this.chrImage.setTexture(this.characters[this.Index].key)
-            this.chrImage.setFrame(10)
         }
 
         // update text style

@@ -79,35 +79,55 @@ class Play extends Phaser.Scene {
             this.chrBodySizeX = this.chr.width * 0.6
             this.chrBodySizeY = this.chr.height
             this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
-            
+
             // play clock count down
             this.timeLeft = 60
             this.timeText = this.add.text(game.config.width / 2, 50, this.timeLeft, textConfig).setOrigin(0.5).setDepth(3).setScrollFactor(0)
             this.clock = this.time.addEvent({
                 delay: 1000,
-                callback: () => { if (this.start) {this.timeLeft-- }},
+                callback: () => { if (this.start) { this.timeLeft-- } },
                 callbackScope: this,
                 repeat: -1
             })
-            
+
         } else if (game.gameMode == 'Mode2') {
             // background
             this.map = this.add.image(0, 0, 'map2').setOrigin(0)
-            
+
             // platforms
             this.plats = this.add.group()
-            
-            
+
+
             // character
-            this.chr = this.physics.add.sprite(150, this.map.height - 200, game.selectedCharacter).setScale(0.3).setDepth(5).setFrame(10)
+            this.chr = this.physics.add.sprite(150, this.map.height - 200, game.selectedCharacter).setScale(0.4).setDepth(5).setFrame(0)
             this.chrBodySizeX = this.chr.width * 0.4
             this.chrBodySizeY = this.chr.height * 0.95
             this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
-            this.chr.body.setOffset((this.chr.width *0.5)/ 2, this.chr.height - this.chr.body.height - 10)
-            
+            this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height - this.chr.body.height - 10)
+
+            // animation
+            this.anims.create({
+                key: 'walk',
+                frames: this.anims.generateFrameNumbers('Candace', { start: 2, end: 9, first: 2 }),
+                frameRate: 15,
+                repeat: -1
+            })
+            this.anims.create({
+                key: 'idle',
+                frames: this.anims.generateFrameNumbers('Candace', { start: 0, end: 0, first: 0 }),
+                frameRate: 15,
+                repeat: -1
+            })
+            this.anims.create({
+                key: 'fire',
+                frames: this.anims.generateFrameNumbers('Candace', { start: 1, end: 1, first: 1 }),
+                frameRate: 15,
+                repeat: -1
+            })
+
             // laser group
             this.lasers = this.createLasers()
-            
+
 
             this.timeText = this.add.text(game.config.width / 2, 50, this.score, textConfig).setOrigin(0.5).setDepth(3).setScrollFactor(0)
 
@@ -280,33 +300,35 @@ class Play extends Phaser.Scene {
             }
         }
 
-        if (!this.isMoving) {
-            this.chr.body.velocity.x = 0
-        }
-
         // left/right movement
-        if (keyLEFT.isDown && keyRIGHT.isDown && !this.isMoving && !this.isDucking) {
-            this.isMoving = true
-        } else if (keyLEFT.isDown && !this.isMoving && !this.isDucking) {
+        if (keyLEFT.isDown && keyRIGHT.isDown && !this.isDucking && !this.isFiring) {
+            this.isMoving = false
+            this.chr.body.velocity.x = 0
+            this.chr.anims.play('idle', true)
+        } else if (keyLEFT.isDown && !this.isMoving && !this.isDucking && !this.isFiring) {
             this.chr.body.velocity.x -= this.MOVE_VELOCITY
             this.isMoving = true
             this.direction = -1
-        } else if (keyRIGHT.isDown && !this.isMoving && !this.isDucking) {
+            this.chr.anims.play('walk', true)
+        } else if (keyRIGHT.isDown && !this.isMoving && !this.isDucking && !this.isFiring) {
             this.chr.body.velocity.x += this.MOVE_VELOCITY
             this.isMoving = true
             this.direction = 1
+            this.chr.anims.play('walk', true)
         }
-        if (!keyLEFT.isDown || !keyRIGHT.isDown) {
+        if (!keyLEFT.isDown && !keyRIGHT.isDown && !this.isFiring) {
             this.isMoving = false
+            this.chr.body.velocity.x = 0
+            this.chr.anims.play('idle', true)
         }
 
         // flip character image
         if (this.direction < 0) {
             this.chr.setFlip(true, false)
-            this.chr.body.setOffset((this.chr.width *0.7)/ 2, this.chr.height * 0.05 - 10)
+            this.chr.body.setOffset((this.chr.width * 0.7) / 2, this.chr.height * 0.05 - 10)
         } else {
             this.chr.resetFlip()
-            this.chr.body.setOffset((this.chr.width *0.5)/ 2, this.chr.height * 0.05 - 10)
+            this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height * 0.05 - 10)
         }
 
         // enemy movement
@@ -325,8 +347,13 @@ class Play extends Phaser.Scene {
             }
         } else if (game.gameMode == 'Mode2') {
             // shooting
-            if (Phaser.Input.Keyboard.JustDown(keyZ)) {
+            if (Phaser.Input.Keyboard.JustDown(keyZ) && !this.isFiring && this.chr.body.touching.down) {
+                this.isFiring = true
+                this.isMoving = false
+                this.chr.body.velocity.x = 0
                 this.fire(this.chr.x, this.chr.y, this.direction)
+                this.chr.anims.play('fire', true)
+                this.time.delayedCall(100, () => { this.isFiring = false })
             }
 
             // reset laser
