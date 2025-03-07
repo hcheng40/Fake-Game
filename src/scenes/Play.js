@@ -18,7 +18,7 @@ class Play extends Phaser.Scene {
         this.fullHealth = false
         this.spawnRange = 300
         this.direction = 1  // 1: facing right, -1: facing left
-        this.enemySpeed = 120
+        this.enemySpeed = 100
 
         this.timeleft = 0
         this.score = 0
@@ -79,7 +79,7 @@ class Play extends Phaser.Scene {
             this.chrBodySizeX = this.chr.width * 0.6
             this.chrBodySizeY = this.chr.height
             this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
-
+            
             // play clock count down
             this.timeLeft = 60
             this.timeText = this.add.text(game.config.width / 2, 50, this.timeLeft, textConfig).setOrigin(0.5).setDepth(3).setScrollFactor(0)
@@ -89,23 +89,27 @@ class Play extends Phaser.Scene {
                 callbackScope: this,
                 repeat: -1
             })
-
+            
         } else if (game.gameMode == 'Mode2') {
             // background
-            // this.map = this.add.image(0, 0, 'map2').setOrigin(0)
-
+            this.map = this.add.image(0, 0, 'map2').setOrigin(0)
+            
             // platforms
             this.plats = this.add.group()
-
-
+            
+            
             // character
-            this.chr = this.physics.add.sprite(150, this.map.height - 200, game.selectedCharacter).setScale(2.5).setDepth(5)
-            this.chrBodySizeX = this.chr.width * 0.6
-            this.chrBodySizeY = this.chr.height
+            this.chr = this.physics.add.sprite(150, this.map.height - 200, game.selectedCharacter).setScale(0.3).setDepth(5).setFrame(10)
+            this.chrBodySizeX = this.chr.width * 0.4
+            this.chrBodySizeY = this.chr.height * 0.95
             this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
-
+            this.chr.body.setOffset((this.chr.width *0.5)/ 2, this.chr.height - this.chr.body.height - 10)
+            
             // laser group
-            this.lasers = createLasers()
+            this.lasers = this.createLasers()
+            
+
+            this.timeText = this.add.text(game.config.width / 2, 50, this.score, textConfig).setOrigin(0.5).setDepth(3).setScrollFactor(0)
 
 
         } else {
@@ -296,6 +300,15 @@ class Play extends Phaser.Scene {
             this.isMoving = false
         }
 
+        // flip character image
+        if (this.direction < 0) {
+            this.chr.setFlip(true, false)
+            this.chr.body.setOffset((this.chr.width *0.7)/ 2, this.chr.height * 0.05 - 10)
+        } else {
+            this.chr.resetFlip()
+            this.chr.body.setOffset((this.chr.width *0.5)/ 2, this.chr.height * 0.05 - 10)
+        }
+
         // enemy movement
         if (game.gameMode == 'Mode1') {
             this.timeText.text = Math.floor(this.timeLeft)
@@ -313,7 +326,7 @@ class Play extends Phaser.Scene {
         } else if (game.gameMode == 'Mode2') {
             // shooting
             if (Phaser.Input.Keyboard.JustDown(keyZ)) {
-                fire(this.chr.x, this.chr.y, this.direction)
+                this.fire(this.chr.x, this.chr.y, this.direction)
             }
 
             // reset laser
@@ -515,7 +528,7 @@ class Play extends Phaser.Scene {
         })
 
         for (let i = 0; i < lasers.maxSize; i++) {
-            let laser = this.physics.add.sprite(-500, -500, '')
+            let laser = this.physics.add.sprite(-500, -500, 'laser').setScale(5)
             laser.setActive(false)
             laser.setVisible(false)
             lasers.add(laser)
@@ -525,11 +538,10 @@ class Play extends Phaser.Scene {
 
     // fire function
     fire(x, y, direction) {
-        let laser = this.lasers.getFirstDead(false)
+        let laser = this.lasers.get(x, y, 'laser')
         if (laser) {
             laser.body.reset(x, y)
-            laser.setActive(true)
-            laser.setVisible(true)
+            laser.setActive(true).setVisible(true)
             laser.setVelocityX(direction * 300)
         }
     }

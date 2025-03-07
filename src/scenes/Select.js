@@ -16,29 +16,27 @@ class Select extends Phaser.Scene {
 
         // character list
         this.characters = [
-            { key: 'apple', name: 'Phineas' },    // index 0
-            { key: 'peach', name: '' },           // index 1
-            { key: 'bird', name: 'Candace' },     // index 2
+            { key: 'Phineas', name: 'Phineas' },    // index 0
+            { key: 'Buford', name: 'Buford' },      // index 1
+            { key: 'Candace', name: 'Candace' },    // index 2
             // add new characters here
         ]
         this.Index = 0
         this.firstSelect = false
 
         // box to display selected character
-        this.boxBorder = this.add.rectangle(450, 500, 330, 380, 0xAAFFDD)
-        this.box = this.add.rectangle(450, 500, 300, 350, 0x000000)
+        this.boxBorder = this.add.rectangle(450, 500, 430, 480, 0xAAFFDD)
+        this.box = this.add.rectangle(450, 500, 400, 450, 0x000000)
 
         // character choices
         this.characterTexts = []
-        let startX = 850
-        let startY = 400
         this.characters.forEach((chr, i) => {
-            let charTextConfig = this.add.text(startX, startY + i * 100, chr.name, {
+            let charTextConfig = this.add.text(700, 400 + i * 100, chr.name, {
                 fontFamily: 'Comic Sans MS',
                 fontSize: '45px',
                 color: '#FFFFFF',
                 align: 'center',
-                fixedWidth: 250
+                fixedWidth: 500
             })
             this.characterTexts.push(charTextConfig)
         })
@@ -55,9 +53,9 @@ class Select extends Phaser.Scene {
         this.input.keyboard.on('keydown-Z', () => {
             if (this.firstSelect) {
                 game.selectedCharacter = this.characters[this.Index].key
-                if (game.selectedCharacter == 'apple' || game.selectedCharacter == 'peach') {
+                if (game.selectedCharacter == 'Phineas' || game.selectedCharacter == 'Buford') {
                     game.gameMode = 'Mode1'
-                } else if (game.selectedCharacter == 'bird') {
+                } else if (game.selectedCharacter == 'Candace') {
                     game.gameMode = 'Mode2'
                 }
                 this.scene.start('playScene')
@@ -79,9 +77,11 @@ class Select extends Phaser.Scene {
             this.Index = 0
             this.firstSelect = true
             this.chrImage = this.add.sprite(450, 500, this.characters[this.Index].key).setScale(0.75)
+            this.chrImage.setFrame(10)
         } else {
             this.Index = Phaser.Math.Wrap(this.Index + keyPressed, 0, this.characters.length)
             this.chrImage.setTexture(this.characters[this.Index].key)
+            this.chrImage.setFrame(10)
         }
 
         // update text style

@@ -6,6 +6,7 @@ class Menu extends Phaser.Scene {
     preload() {
         // load images/tile sprites
         this.load.image('map', './assets/map.png')
+        this.load.image('map2', './assets/map2.png')
         this.load.image('ground', './assets/ground.png')
         this.load.image('cloud1', './assets/cloud1.png')
         this.load.image('cloud2', './assets/cloud2.png')
@@ -16,6 +17,7 @@ class Menu extends Phaser.Scene {
         this.load.image('hybrid1', './assets/hybrid1.png')
         this.load.image('hybrid', './assets/hybrid.png')
         this.load.image('hairdryer', './assets/hairdryer.png')
+        this.load.image('laser', './assets/bullet.png')
         
 
 
@@ -46,6 +48,13 @@ class Menu extends Phaser.Scene {
             frameHeight: 61,
             startFrame: 0,
             endFrame: 1
+        })
+
+        this.load.spritesheet('Candace', './assets/candace.png', {
+            frameWidth: 437,
+            frameHeight: 521,
+            startFrame: 0,
+            endFrame: 10
         })
 
 
