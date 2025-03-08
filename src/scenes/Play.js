@@ -109,12 +109,7 @@ class Play extends Phaser.Scene {
             this.lasers = this.createLasers()
 
             // laser hit enemies
-            this.physics.add.overlap(this.lasers, this.enemies, (laser, enemy) => {
-                this.sound.play('score-sfx')
-                this.score += 10
-                enemy.destroy()
-                laser.setActive(false).setVisible(false)
-            })
+            
 
             this.timeText = this.add.text(game.config.width / 2, 50, this.score, textConfig).setOrigin(0.5).setDepth(3).setScrollFactor(0)
 
