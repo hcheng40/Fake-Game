@@ -4,59 +4,62 @@ class Menu extends Phaser.Scene {
     }
 
     preload() {
+        // load assets
+        this.load.path = "./assets/"
+
         // load images/tile sprites
-        this.load.image('map', './assets/map.png')
-        this.load.image('map2', './assets/map2.png')
-        this.load.image('ground', './assets/ground.png')
-        this.load.image('cloud1', './assets/cloud1.png')
-        this.load.image('cloud2', './assets/cloud2.png')
-        this.load.image('cloud3', './assets/cloud3.png')
-        this.load.image('wood1', './assets/wood1.png')
-        this.load.image('wood2', './assets/wood2.png')
-        this.load.image('pipe1', './assets/pipe1.png')
-        this.load.image('hybrid1', './assets/hybrid1.png')
-        this.load.image('hybrid', './assets/hybrid.png')
-        this.load.image('bullet', './assets/bullet.png')
-        this.load.image('menuBackground', './assets/menuBackground.png')
+        this.load.image('map', 'img/map.png')
+        this.load.image('map2', 'img/map2.png')
+        this.load.image('ground', 'img/ground.png')
+        this.load.image('cloud1', 'img/cloud1.png')
+        this.load.image('cloud2', 'img/cloud2.png')
+        this.load.image('cloud3', 'img/cloud3.png')
+        this.load.image('wood1', 'img/wood1.png')
+        this.load.image('wood2', 'img/wood2.png')
+        this.load.image('pipe1', 'img/pipe1.png')
+        this.load.image('hybrid1', 'img/hybrid1.png')
+        this.load.image('hybrid', 'img/hybrid.png')
+        this.load.image('bullet', 'img/bullet.png')
+        this.load.image('menuBackground', 'img/menuBackground.png')
 
         // load spritesheet
-        this.load.spritesheet('healthbar', './assets/healthbar.png', {
+        this.load.spritesheet('healthbar', 'img/healthbar.png', {
             frameWidth: 23,
             frameHeight: 107,
             startFrame: 0,
             endFrame: 4
         })
-        this.load.spritesheet('apple', './assets/apple.png', {
+        this.load.spritesheet('apple', 'img/apple.png', {
             frameWidth: 225,
             frameHeight: 207,
             startFrame: 0,
             endFrame: 1
         })
-        this.load.spritesheet('peach', './assets/peach.png', {
+        this.load.spritesheet('peach', 'img/peach.png', {
             frameWidth: 173,
             frameHeight: 210,
             startFrame: 0,
             endFrame: 1
         })
-        this.load.spritesheet('bird', './assets/bird.png', {
+        this.load.spritesheet('bird', 'img/bird.png', {
             frameWidth: 159,
             frameHeight: 61,
             startFrame: 0,
             endFrame: 1
         })
-        this.load.spritesheet('Candace', './assets/candace.png', {
+        this.load.spritesheet('Candace', 'img/candace.png', {
             frameWidth: 437,
             frameHeight: 521,
             startFrame: 0,
             endFrame: 10
         })
-        this.load.spritesheet('Phineas', './assets/Phineas.png', {
+        this.load.spritesheet('Phineas', 'img/Phineas.png', {
             frameWidth: 640,
             frameHeight: 720,
             startFrame: 0,
             endFrame: 4
         })
-        this.load.spritesheet('Buford', './assets/Buford.png', {
+        this.load.spritesheet('Buford', 'img/Buford.png', {
             frameWidth: 396,
             frameHeight: 630,
             startFrame: 0,
@@ -64,13 +67,13 @@ class Menu extends Phaser.Scene {
         })
 
         // load audio
-        this.load.audio('jump-sfx', './assets/jump.wav')
-        this.load.audio('shot-sfx', './assets/shot.wav')
-        this.load.audio('hurt-sfx', './assets/hurt.wav')
-        this.load.audio('score-sfx', './assets/score.wav')
-        this.load.audio('gameover-sfx', './assets/gameover.wav')
-        this.load.audio('select-sfx', './assets/select.wav')
-        // this.load.audio('music-sfx', './assets/music.wav')
+        this.load.audio('jump-sfx', 'sfx/jump.wav')
+        this.load.audio('shot-sfx', 'sfx/shot.wav')
+        this.load.audio('hurt-sfx', 'sfx/hurt.wav')
+        this.load.audio('score-sfx', 'sfx/score.wav')
+        this.load.audio('gameover-sfx', 'sfx/gameover.wav')
+        this.load.audio('select-sfx', 'sfx/select.wav')
+        // this.load.audio('music-sfx', 'sfx/music.wav')
 
     }
 
@@ -83,8 +86,8 @@ class Menu extends Phaser.Scene {
             fontSize: '34px',
             fontStyle: 'bold',
             color: '#000000',
-            stroke: '#FFFFFF',
-            strokeThickness: 10,
+            stroke: '#AAFFDD',
+            strokeThickness: 20,
             align: 'center',
             padding: {
                 top: 10,
@@ -101,8 +104,9 @@ class Menu extends Phaser.Scene {
                 this.continue.visible = !this.continue.visible
             }
         })
-        menuConfig.fontSize = '90px'
-        this.add.text(game.config.width / 2, game.config.height / 2 - 350, "Jump N' Duck", menuConfig).setOrigin(0.5)
+        menuConfig.stroke = '#FFFFFF'
+        menuConfig.fontSize = '120px'
+        this.add.text(game.config.width / 2, game.config.height / 2 - 270, "Jump N' Duck", menuConfig).setOrigin(0.5)
 
 
         // enemy animation
