@@ -106,9 +106,8 @@ class Menu extends Phaser.Scene {
         })
         menuConfig.stroke = '#FFFFFF'
         menuConfig.fontSize = '120px'
-        this.add.text(game.config.width / 2, game.config.height / 2 - 270, "Jump N' Duck", menuConfig).setOrigin(0.5)
-
-
+        this.add.text(game.config.width / 2, game.config.height / 2 - 270, "Jump 'N Duck", menuConfig).setOrigin(0.5)
+        
         // enemy animation
         this.anims.create({
             key: 'apples',
