@@ -16,10 +16,8 @@ class Menu extends Phaser.Scene {
         this.load.image('pipe1', './assets/pipe1.png')
         this.load.image('hybrid1', './assets/hybrid1.png')
         this.load.image('hybrid', './assets/hybrid.png')
-        this.load.image('hairdryer', './assets/hairdryer.png')
         this.load.image('laser', './assets/bullet.png')
-
-
+        this.load.image('menuBackground', './assets/menuBackground.png')
 
         // load spritesheet
         this.load.spritesheet('healthbar', './assets/healthbar.png', {
@@ -28,28 +26,24 @@ class Menu extends Phaser.Scene {
             startFrame: 0,
             endFrame: 4
         })
-
         this.load.spritesheet('apple', './assets/apple.png', {
             frameWidth: 225,
             frameHeight: 207,
             startFrame: 0,
             endFrame: 1
         })
-
         this.load.spritesheet('peach', './assets/peach.png', {
             frameWidth: 173,
             frameHeight: 210,
             startFrame: 0,
             endFrame: 1
         })
-
         this.load.spritesheet('bird', './assets/bird.png', {
             frameWidth: 159,
             frameHeight: 61,
             startFrame: 0,
             endFrame: 1
         })
-
         this.load.spritesheet('Candace', './assets/candace.png', {
             frameWidth: 437,
             frameHeight: 521,
@@ -57,21 +51,24 @@ class Menu extends Phaser.Scene {
             endFrame: 10
         })
 
-
-
         // load audio
         this.load.audio('jump-sfx', './assets/jump.wav')
+        this.load.audio('shot-sfx', './assets/shot.wav')
+        this.load.audio('hurt-sfx', './assets/hurt.wav')
+        this.load.audio('score-sfx', './assets/score.wav')
+        this.load.audio('gameover-sfx', './assets/gameover.wav')
+        this.load.audio('select-sfx', './assets/select.wav')
+        // this.load.audio('music-sfx', './assets/music.wav')
     }
 
     create() {
         // background
-        // this.Background = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'menubackground').setOrigin(0)
+        // this.menuBackground = this.add.image(0, 0, game.config.width, game.config.height, 'menubackground').setOrigin(0)
 
         let menuConfig = {
             fontFamily: 'Comic Sans MS',
             fontSize: '34px',
             fontStyle: 'bold',
-            // backgroundColor: '#C3B594',
             color: '#FFFFFF',
             align: 'center',
             padding: {
@@ -83,8 +80,14 @@ class Menu extends Phaser.Scene {
             fixedWidth: 0
         }
         // display menu text
-        this.add.text(game.config.width / 2, game.config.height / 2 + 20, 'Press Any Key To Continue', menuConfig).setOrigin(0.5)
-        this.add.text(game.config.width / 2, game.config.height / 2 + 65, '', menuConfig).setOrigin(0.5)
+        this.continue = this.add.text(game.config.width / 2, game.config.height / 2 + 300, 'Press Any Key To Continue', menuConfig).setOrigin(0.5)
+        this.time.addEvent({
+            delay: 400, repeat: -1, callback: () => {
+                this.continue.visible = !this.continue.visible
+            }
+        })
+        menuConfig.fontSize = '80px'
+        this.add.text(game.config.width / 2, game.config.height / 2 - 150, "Jump N' Duck", menuConfig).setOrigin(0.5)
 
 
         // enemy animation
@@ -136,8 +139,9 @@ class Menu extends Phaser.Scene {
 
 
         this.input.keyboard.on('keydown', () => {
-            game.settings = { gameSpeed: 3 };
-            this.scene.start('selectScene');
+            game.settings = { gameSpeed: 3 }
+            this.sound.play('select-sfx', { volume: 0.5 })
+            this.scene.start('selectScene')
         })
     }
 

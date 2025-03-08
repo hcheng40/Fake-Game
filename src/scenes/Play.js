@@ -75,7 +75,7 @@ class Play extends Phaser.Scene {
 
 
             // character
-            this.chr = this.physics.add.sprite(150, this.map.height - 200, '').setScale(2.5).setDepth(5)
+            this.chr = this.physics.add.sprite(150, this.map.height - 200, '').setScale(0.4).setDepth(5).setFrame(0)
             this.chrBodySizeX = this.chr.width * 0.6
             this.chrBodySizeY = this.chr.height
             this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
@@ -108,9 +108,15 @@ class Play extends Phaser.Scene {
             // laser group
             this.lasers = this.createLasers()
 
+            // laser hit enemies
+            this.physics.add.overlap(this.lasers, this.enemies, (laser, enemy) => {
+                this.sound.play('score-sfx')
+                this.score += 10
+                enemy.destroy()
+                laser.setActive(false).setVisible(false)
+            })
 
             this.timeText = this.add.text(game.config.width / 2, 50, this.score, textConfig).setOrigin(0.5).setDepth(3).setScrollFactor(0)
-
 
         } else {
             console.log('Hacker')
@@ -253,28 +259,44 @@ class Play extends Phaser.Scene {
             this.isMoving = false
             this.chr.body.velocity.x = 0
             if (this.canJumpAgain) {
-                this.chr.anims.play('idle_Candace', true)
+                if (game.gameMode == 'Mode1') {
+                    // this.chr.anims.play('', true)
+                } else {
+                    this.chr.anims.play('idle_Candace', true)
+                }
             }
         } else if (keyLEFT.isDown && !this.isDucking && !this.isFiring) {
             this.chr.body.velocity.x = -this.MOVE_VELOCITY
             this.isMoving = true
             this.direction = -1
             if (this.canJumpAgain) {
-                this.chr.anims.play('walk_Candace', true)
+                if (game.gameMode == 'Mode1') {
+                    // this.chr.anims.play('', true)
+                } else {
+                    this.chr.anims.play('walk_Candace', true)
+                }
             }
         } else if (keyRIGHT.isDown && !this.isDucking && !this.isFiring) {
             this.chr.body.velocity.x = this.MOVE_VELOCITY
             this.isMoving = true
             this.direction = 1
             if (this.canJumpAgain) {
-                this.chr.anims.play('walk_Candace', true)
+                if (game.gameMode == 'Mode1') {
+                    // this.chr.anims.play('', true)
+                } else {
+                    this.chr.anims.play('walk_Candace', true)
+                }
             }
         }
         if (!keyLEFT.isDown && !keyRIGHT.isDown && !this.isFiring) {
             this.isMoving = false
             this.chr.body.velocity.x = 0
             if (this.canJumpAgain) {
-                this.chr.anims.play('idle_Candace', true)
+                if (game.gameMode == 'Mode1') {
+                    // this.chr.anims.play('', true)
+                } else {
+                    this.chr.anims.play('idle_Candace', true)
+                }
             }
         }
 
@@ -285,9 +307,14 @@ class Play extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(keyUP) && this.chr.body.touching.down) {
             this.chr.body.velocity.y = this.JUMP_VELOCITY
             this.canJumpAgain = false
-            this.chr.anims.play('jump_Candace')
+            if (game.gameMode == 'Mode1') {
+                // this.chr.anims.play('', true)
+            } else {
+                this.chr.anims.play('jump_Candace')
+            }
             this.sound.play('jump-sfx')
         }
+
 
         // flip character image
         if (this.direction < 0) {
@@ -320,6 +347,7 @@ class Play extends Phaser.Scene {
                 this.chr.body.velocity.x = 0
                 this.fire(this.chr.x, this.chr.y, this.direction)
                 this.chr.anims.play('fire_Candace', true)
+                this.sound.play('shot-sfx')
                 this.time.delayedCall(100, () => { this.isFiring = false })
             }
 
@@ -378,8 +406,7 @@ class Play extends Phaser.Scene {
 
         // gameover
         // if (this.gameOver) {
-        //     this.sound.play('sfx-die')
-        //     this.sound.play('sfx-die2')
+        //     this.sound.play('gameover-sfx')
         //     this.clock.remove()
         //     this.bgm.stop()
         //     this.scene.start('gameOverScene', { score: this.score })
@@ -505,6 +532,7 @@ class Play extends Phaser.Scene {
             this.healthBar.setVisible(true)
             this.time.addEvent({ delay: 2000, repeat: 0, callback: () => { this.healthBar.setVisible(false) } })
             console.log("hit")
+            this.sound.play('hurt-sfx')
             this.justTakeDamage = true
             this.time.addEvent({ delay: 2000, repeat: 0, callback: () => { this.justTakeDamage = false } })
             this.chr.setTint(0xFF0000)
@@ -518,11 +546,13 @@ class Play extends Phaser.Scene {
     createLasers() {
         let lasers = this.physics.add.group({
             classType: Phaser.Physics.Arcade.Sprite,
-            maxSize: 20
+            maxSize: 20,
+            defaultKey: 'laser'
         })
 
         for (let i = 0; i < lasers.maxSize; i++) {
             let laser = this.physics.add.sprite(-500, -500, 'laser').setScale(5)
+            // laser.setAllowGravity(false)
             laser.setActive(false)
             laser.setVisible(false)
             lasers.add(laser)

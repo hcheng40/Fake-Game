@@ -4,6 +4,12 @@ class Select extends Phaser.Scene {
     }
 
     create() {
+        // variables
+        this.Index = 0
+        this.firstSelect = false
+        this.textAdded = false
+        this.startShining = false
+
         // text at the top
         this.selectConfig = {
             fontFamily: 'Comic Sans MS',
@@ -21,8 +27,6 @@ class Select extends Phaser.Scene {
             { key: 'Candace', name: 'Candace' },    // index 2
             // add new characters here
         ]
-        this.Index = 0
-        this.firstSelect = false
 
         // box to display selected character
         this.boxBorder = this.add.rectangle(450, 500, 430, 480, 0xAAFFDD)
@@ -42,8 +46,6 @@ class Select extends Phaser.Scene {
         })
 
         this.selectConfig.fontSize = '40px'
-        this.textAdded = false
-
 
         // select
         this.input.keyboard.on('keydown-UP', () => { this.changeSelection(-1) })
@@ -66,7 +68,15 @@ class Select extends Phaser.Scene {
     update() {
         if (this.firstSelect && !this.textAdded) {
             this.textAdded = true
-            this.add.text(game.config.width / 2, 850, 'Press Z to Start', this.selectConfig).setOrigin(0.5)
+            this.toStart = this.add.text(game.config.width / 2, 850, 'Press Z to Start', this.selectConfig).setOrigin(0.5)
+        }
+        if (!this.startShining && this.textAdded) {
+            this.time.addEvent({
+                delay: 400, repeat: -1, callback: () => {
+                    this.toStart.visible = !this.toStart.visible
+                }
+            })
+            this.startShining = true
         }
     }
 
@@ -81,6 +91,8 @@ class Select extends Phaser.Scene {
             this.Index = Phaser.Math.Wrap(this.Index + keyPressed, 0, this.characters.length)
             this.chrImage.setTexture(this.characters[this.Index].key)
         }
+
+        this.sound.play('select-sfx', { volume: 0.5 })
 
         // update text style
         this.characterTexts.forEach((text, i) => {
