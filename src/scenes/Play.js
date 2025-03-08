@@ -4,7 +4,7 @@ class Play extends Phaser.Scene {
     }
 
     init() {
-        console.log(game.gameMode)
+        // console.log(game.gameMode)
         // variables and settings
         this.JUMP_VELOCITY = -1250
         this.MOVE_VELOCITY = 400
@@ -45,11 +45,10 @@ class Play extends Phaser.Scene {
             fixedWidth: 200,
             fixedHeight: 60
         }
-        this.textBorder = this.add.rectangle(game.config.width / 2, 50, textConfig.fixedWidth + 15, textConfig.fixedHeight + 15, '0x5C4033').setOrigin(0.5).setDepth(2).setScrollFactor(0)
+        this.textBorder = this.add.rectangle(game.config.width / 2, 50, textConfig.fixedWidth + 15, textConfig.fixedHeight + 15, '0x5C4033').setOrigin(0.5).setDepth(3).setScrollFactor(0)
 
         // different game mode
         if (game.gameMode == 'Mode1') {
-
             // background
             this.map = this.add.image(0, 0, 'map').setOrigin(0)
 
@@ -75,17 +74,25 @@ class Play extends Phaser.Scene {
 
 
             // character
-            this.chr = this.physics.add.sprite(150, this.map.height - 200, '').setScale(0.4).setDepth(5).setFrame(0)
-            this.chrBodySizeX = this.chr.width * 0.6
-            this.chrBodySizeY = this.chr.height
-            this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
+            this.chr = this.physics.add.sprite(150, this.map.height - 200, game.selectedCharacter).setScale(0.25).setDepth(5).setFrame(0)
+            if (game.selectedCharacter == 'Phineas') {
+                this.chrBodySizeX = this.chr.width * 0.3
+                this.chrBodySizeY = this.chr.height * 0.8
+                this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
+                this.chr.body.setOffset((this.chr.width * 0.8) / 2, this.chr.height * 0.2)
+            } else {
+                this.chrBodySizeX = this.chr.width * 0.5
+                this.chrBodySizeY = this.chr.height  * 0.9
+                this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
+                this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height * 0.1)
+            }
 
             // Create enemy group
             this.enemies = this.physics.add.group()
             this.enemies_bird = this.physics.add.group()
             this.addApple(game.gameMode)
             this.addPeach(game.gameMode)
-            this.numEnemy = 40
+            this.numEnemy = 35
 
             // play clock count down
             this.timeLeft = 60
@@ -110,14 +117,14 @@ class Play extends Phaser.Scene {
             this.chrBodySizeX = this.chr.width * 0.4
             this.chrBodySizeY = this.chr.height * 0.95
             this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
-            this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height - this.chr.body.height - 10)
+            this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height * 0.05 - 10)
 
             // Create enemy group
             this.enemies = this.physics.add.group()
             this.enemies_bird = this.physics.add.group()
             this.addApple(game.gameMode)
             this.addPeach(game.gameMode)
-            this.numEnemy = 20
+            this.numEnemy = 45
 
             // bullet group
             this.plasma = this.add.particles(0, 0, 'bullet', {
@@ -156,7 +163,7 @@ class Play extends Phaser.Scene {
             this.scoreText = this.add.text(game.config.width / 2, 50, this.score, textConfig).setOrigin(0.5).setDepth(3).setScrollFactor(0)
 
         } else {
-            console.log('Hacker')
+            // console.log('Hacker')
         }
 
         // bgm
@@ -170,6 +177,13 @@ class Play extends Phaser.Scene {
         this.cloud1.body.setAllowGravity(false).setVelocityX(-100)
         this.cloud2.body.setAllowGravity(false).setVelocityX(-170)
         this.cloud3.body.setAllowGravity(false).setVelocityX(-130)
+
+        this.cloud4 = this.physics.add.sprite(this.map.width / 2 , this.map.height - 1100, 'cloud1').setScale(2).setDepth(0)
+        this.cloud5 = this.physics.add.sprite(this.map.width - 900, this.map.height - 450, 'cloud2').setScale(3.4).setDepth(0)
+        this.cloud6 = this.physics.add.sprite(this.map.width - 1850, this.map.height - 760, 'cloud3').setScale(2.8).setDepth(0)
+        this.cloud4.body.setAllowGravity(false).setVelocityX(-200)
+        this.cloud5.body.setAllowGravity(false).setVelocityX(-180)
+        this.cloud6.body.setAllowGravity(false).setVelocityX(-110)
 
         // ground
         this.ground = this.add.group()
@@ -243,7 +257,7 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.chr, this.enemies_bird, () => { this.takeDamage() })
 
         // speed increase after 15 seconds
-        // this.clock = this.time.addEvent({ delay: 3000, callback: this.onEvent, callbackScope: this, loop: true })
+        // this.clock = this.time.addEvent({ delay: 3000, callback: () => {game.settings.gameSpeed + 2}, callbackScope: this, loop: true })
 
 
         // debug key listener (bind to D key)
@@ -264,20 +278,37 @@ class Play extends Phaser.Scene {
         this.physics.world.wrap(this.cloud1, this.cloud1.width / 2)
         this.physics.world.wrap(this.cloud2, this.cloud2.width / 2)
         this.physics.world.wrap(this.cloud3, this.cloud3.width / 2)
+        this.physics.world.wrap(this.cloud4, this.cloud1.width / 2)
+        this.physics.world.wrap(this.cloud5, this.cloud2.width / 2)
+        this.physics.world.wrap(this.cloud6, this.cloud3.width / 2)
 
         // duck
         if (game.gameMode == 'Mode1') {
             if (keyDOWN.isDown && this.chr.body.touching.down) {
                 if (!this.isDucking) {
                     this.isDucking = true
-                    this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY * 0.5)
-                    this.chr.body.setOffset((this.chr.width - this.chrBodySizeX) / 2, this.chr.height * 0.5)
+                    if (game.selectedCharacter == 'Phineas') {
+                        this.chr.anims.play('duck_Phineas')
+                        this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY * 0.7)
+                        this.chr.body.setOffset((this.chr.width - this.chrBodySizeX) / 2, this.chr.height * 0.44)
+                    } else {
+                        this.chr.anims.play('duck_Buford')
+                        this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY * 0.7)
+                        this.chr.body.setOffset((this.chr.width - this.chrBodySizeX) / 2, this.chr.height * 0.37)
+                    }
                     this.chr.body.velocity.x = 0
                 }
             } else if (this.isDucking) {
                 this.isDucking = false
-                this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY)
-                this.chr.body.setOffset((this.chr.width - this.chrBodySizeX) / 2, 0)
+                if (game.selectedCharacter == 'Phineas') {
+                    this.chr.anims.play('duck_Phineas')
+                    this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY)
+                    this.chr.body.setOffset((this.chr.width - this.chrBodySizeX) / 2, this.chr.height * 0.4)
+                } else {
+                    this.chr.anims.play('duck_Buford')
+                    this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY)
+                    this.chr.body.setOffset((this.chr.width - this.chrBodySizeX) / 2, 0)
+                }
             }
         }
 
@@ -286,10 +317,12 @@ class Play extends Phaser.Scene {
             this.isMoving = false
             this.chr.body.velocity.x = 0
             if (this.canJumpAgain) {
-                if (game.gameMode == 'Mode1') {
-                    // this.chr.anims.play('', true)
+                if (game.selectedCharacter == 'Phineas') {
+                    this.chr.anims.play('walk_Phineas', true)
+                } else if (game.selectedCharacter == 'Buford') {
+                    this.chr.anims.play('walk_Buford', true)
                 } else {
-                    this.chr.anims.play('idle_Candace', true)
+                    this.chr.anims.play('walk_Candace', true)
                 }
             }
         } else if (keyLEFT.isDown && !this.isDucking && !this.isFiring) {
@@ -297,8 +330,10 @@ class Play extends Phaser.Scene {
             this.isMoving = true
             this.direction = -1
             if (this.canJumpAgain) {
-                if (game.gameMode == 'Mode1') {
-                    // this.chr.anims.play('', true)
+                if (game.selectedCharacter == 'Phineas') {
+                    this.chr.anims.play('walk_Phineas', true)
+                } else if (game.selectedCharacter == 'Buford') {
+                    this.chr.anims.play('walk_Buford', true)
                 } else {
                     this.chr.anims.play('walk_Candace', true)
                 }
@@ -308,19 +343,23 @@ class Play extends Phaser.Scene {
             this.isMoving = true
             this.direction = 1
             if (this.canJumpAgain) {
-                if (game.gameMode == 'Mode1') {
-                    // this.chr.anims.play('', true)
+                if (game.selectedCharacter == 'Phineas') {
+                    this.chr.anims.play('walk_Phineas', true)
+                } else if (game.selectedCharacter == 'Buford') {
+                    this.chr.anims.play('walk_Buford', true)
                 } else {
                     this.chr.anims.play('walk_Candace', true)
                 }
             }
         }
-        if (!keyLEFT.isDown && !keyRIGHT.isDown && !this.isFiring) {
+        if (!keyLEFT.isDown && !keyRIGHT.isDown && !this.isFiring && !this.isDucking) {
             this.isMoving = false
             this.chr.body.velocity.x = 0
             if (this.canJumpAgain) {
-                if (game.gameMode == 'Mode1') {
-                    // this.chr.anims.play('', true)
+                if (game.selectedCharacter == 'Phineas') {
+                    this.chr.anims.play('idle_Phineas')
+                } else if (game.selectedCharacter == 'Buford') {
+                    this.chr.anims.play('idle_Buford')
                 } else {
                     this.chr.anims.play('idle_Candace', true)
                 }
@@ -334,8 +373,10 @@ class Play extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(keyUP) && this.chr.body.touching.down) {
             this.chr.body.velocity.y = this.JUMP_VELOCITY
             this.canJumpAgain = false
-            if (game.gameMode == 'Mode1') {
-                // this.chr.anims.play('', true)
+            if (game.selectedCharacter == 'Phineas') {
+                this.chr.anims.play('jump_Phineas')
+            } else if (game.selectedCharacter == 'Buford') {
+                this.chr.anims.play('jump_Buford')
             } else {
                 this.chr.anims.play('jump_Candace')
             }
@@ -345,10 +386,38 @@ class Play extends Phaser.Scene {
         // flip character image
         if (this.direction < 0) {
             this.chr.setFlip(true, false)
-            this.chr.body.setOffset((this.chr.width * 0.7) / 2, this.chr.height * 0.05 - 10)
+            if (game.selectedCharacter == 'Candace') {
+                this.chr.body.setOffset((this.chr.width * 0.7) / 2, this.chr.height * 0.05 - 10)
+            } else if (game.selectedCharacter == 'Buford') {
+                if (this.isDucking) {
+                    this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height * 0.37)
+                } else {
+                    this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height * 0.1)
+                }
+            } else {
+                if (this.isDucking) {
+                    this.chr.body.setOffset((this.chr.width * 0.6) / 2, this.chr.height * 0.44)
+                } else {
+                    this.chr.body.setOffset((this.chr.width * 0.6) / 2, this.chr.height * 0.2)
+                }
+            }
         } else {
             this.chr.resetFlip()
-            this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height * 0.05 - 10)
+            if (game.selectedCharacter == 'Candace') {
+                this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height * 0.05 - 10)
+            } else if (game.selectedCharacter == 'Buford') {
+                if (this.isDucking) {
+                    this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height * 0.37)
+                } else {
+                    this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height * 0.1)
+                }
+            } else {
+                if (this.isDucking) {
+                    this.chr.body.setOffset((this.chr.width * 0.8) / 2, this.chr.height * 0.44)
+                } else {
+                    this.chr.body.setOffset((this.chr.width * 0.8) / 2, this.chr.height * 0.2)
+                }
+            }
         }
 
         // enemy movement
@@ -454,12 +523,13 @@ class Play extends Phaser.Scene {
                 x = Phaser.Math.Between(-500, this.map.width + 500)
             }
             let y = 0
-            if (mode == 'Mode1') {
-                y = Phaser.Math.Between(-200, -500)
-            } else if (mode == 'Mode2') {
-                y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
-            }
-            let enemy_apple = this.enemies.create(x, y, 'apple').setScale(0.4)
+            y = Phaser.Math.Between(-200, -500)
+            // if (mode == 'Mode1') {
+            //     y = Phaser.Math.Between(-200, -500)
+            // } else if (mode == 'Mode2') {
+            //     y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
+            // }
+            let enemy_apple = this.enemies.create(x, y, 'apple').setScale(0.4).setDepth(2)
             enemy_apple.body.setSize(enemy_apple.width * 0.6, enemy_apple.height * 0.8)
             enemy_apple.body.setOffset((enemy_apple.width - enemy_apple.body.width) / 2, (enemy_apple.height - enemy_apple.body.height))
             if (Phaser.Math.Between(0, 1) == 0) {
@@ -485,12 +555,13 @@ class Play extends Phaser.Scene {
                 x = Phaser.Math.Between(-500, this.map.width + 500)
             }
             let y = 0
-            if (mode == 'Mode1') {
-                y = Phaser.Math.Between(-200, -500)
-            } else if (mode == 'Mode2') {
-                y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
-            }
-            let enemy_peach = this.enemies.create(x, y, 'peach').setScale(0.55)
+            y = Phaser.Math.Between(-200, -500)
+            // if (mode == 'Mode1') {
+            //     y = Phaser.Math.Between(-200, -500)
+            // } else if (mode == 'Mode2') {
+            //     y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
+            // }
+            let enemy_peach = this.enemies.create(x, y, 'peach').setScale(0.55).setDepth(2)
             enemy_peach.body.setSize(enemy_peach.width * 0.6, enemy_peach.height * 0.8)
             enemy_peach.body.setOffset((enemy_peach.width - enemy_peach.body.width + 8) / 2, (enemy_peach.height - enemy_peach.body.height))
             if (Phaser.Math.Between(0, 1) == 0) {
@@ -513,13 +584,13 @@ class Play extends Phaser.Scene {
         for (let i = 0; i < Phaser.Math.Between(1, 1); i++) {
             let birdPath = this.add.path(this.chr.x - Phaser.Math.Between(700, 1200), this.chr.y - Phaser.Math.Between(300, 600))
             birdPath.splineTo([
-                { x: this.chr.x - Phaser.Math.Between(50, 150), y: this.chr.y - Phaser.Math.Between(50, 80) },
+                { x: this.chr.x - Phaser.Math.Between(70, 200), y: this.chr.y - Phaser.Math.Between(110, 150) },
                 { x: this.chr.x + Phaser.Math.Between(350, 650), y: this.chr.y - Phaser.Math.Between(100, 400) },
                 { x: birdPath.getStartPoint().x + 3000, y: -200 }
             ])
             // let graphics = this.add.graphics().lineStyle(2, 0xFFFFFF, 0.75)
             // birdPath.draw(graphics)
-            let enemy_bird = this.add.follower(birdPath, birdPath.getStartPoint().x, birdPath.getStartPoint().y, 'bird').setScale(1)
+            let enemy_bird = this.add.follower(birdPath, birdPath.getStartPoint().x, birdPath.getStartPoint().y, 'bird').setScale(1).setDepth(2)
             this.physics.add.existing(enemy_bird)
             enemy_bird.body.moves = false
             enemy_bird.body.setSize(enemy_bird.width * 0.9, enemy_bird.height * 0.8)
@@ -550,10 +621,10 @@ class Play extends Phaser.Scene {
             }
             this.healthBar.setVisible(true)
             this.time.addEvent({ delay: 2000, repeat: 0, callback: () => { this.healthBar.setVisible(false) } })
-            console.log("hit")
+            // console.log("hit")
             this.sound.play('hurt-sfx')
             this.justTakeDamage = true
-            this.time.addEvent({ delay: 2000, repeat: 0, callback: () => { this.justTakeDamage = false } })
+            this.time.addEvent({ delay: 1000, repeat: 0, callback: () => { this.justTakeDamage = false } })
             this.chr.setTint(0xFF0000)
             this.time.addEvent({ delay: 300, callback: () => { this.chr.clearTint() } })
         } else if (this.health <= 0) {
@@ -576,7 +647,7 @@ class Play extends Phaser.Scene {
             }
             this.healthBar.setVisible(true)
             this.time.addEvent({ delay: 1500, repeat: 0, callback: () => { this.healthBar.setVisible(false) } })
-            console.log("heal")
+            // console.log("heal")
         }
     }
 }

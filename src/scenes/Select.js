@@ -30,7 +30,8 @@ class Select extends Phaser.Scene {
 
         // box to display selected character
         this.boxBorder = this.add.rectangle(450, 500, 430, 480, 0xAAFFDD)
-        this.box = this.add.rectangle(450, 500, 400, 450, 0x000000)
+        this.box = this.add.rectangle(450, 500, 400, 450, 0x303030)
+
 
         // character choices
         this.characterTexts = []
@@ -38,7 +39,10 @@ class Select extends Phaser.Scene {
             let charTextConfig = this.add.text(700, 400 + i * 100, chr.name, {
                 fontFamily: 'Comic Sans MS',
                 fontSize: '45px',
+                fontStyle: 'bold',
                 color: '#FFFFFF',
+                stroke: '#AAFFDD',
+                strokeThickness: 0,
                 align: 'center',
                 fixedWidth: 500
             })
@@ -86,10 +90,16 @@ class Select extends Phaser.Scene {
         if (!this.firstSelect) {
             this.Index = 0
             this.firstSelect = true
-            this.chrImage = this.add.sprite(450, 500, this.characters[this.Index].key).setScale(0.75)
+            this.chrImage = this.add.sprite(450, 500, this.characters[this.Index].key).setScale(0.5)
         } else {
             this.Index = Phaser.Math.Wrap(this.Index + keyPressed, 0, this.characters.length)
-            this.chrImage.setTexture(this.characters[this.Index].key)
+            if (this.characters[this.Index].key == 'Candace') {
+                this.chrImage.setTexture(this.characters[this.Index].key).setScale(0.75)
+            } else if (this.characters[this.Index].key == 'Buford') {
+                this.chrImage.setTexture(this.characters[this.Index].key).setScale(0.6)
+            } else {
+                this.chrImage.setTexture(this.characters[this.Index].key).setScale(0.5)
+            }
         }
 
         this.sound.play('select-sfx', { volume: 0.5 })
@@ -97,9 +107,11 @@ class Select extends Phaser.Scene {
         // update text style
         this.characterTexts.forEach((text, i) => {
             if (i == this.Index) {
-                text.setText(`< ${this.characters[i].name} >`).setStyle({ fontStyle: 'bold' })
+                text.setText(`< ${this.characters[i].name} >`).setStyle({ color: '#000000', strokeThickness: 20 })
+                // text.setText(`< ${this.characters[i].name} >`).setStyle({ fontStyle: 'bold' })
             } else {
-                text.setText(this.characters[i].name).setStyle({ fontStyle: 'normal' })
+                text.setText(this.characters[i].name).setStyle({ color: '#FFFFFF', strokeThickness: 0 })
+                // text.setText(this.characters[i].name).setStyle({ fontStyle: 'normal' })
             }
         })
     }

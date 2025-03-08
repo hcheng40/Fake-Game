@@ -16,7 +16,7 @@ class Menu extends Phaser.Scene {
         this.load.image('pipe1', './assets/pipe1.png')
         this.load.image('hybrid1', './assets/hybrid1.png')
         this.load.image('hybrid', './assets/hybrid.png')
-        this.load.image('bullet', './assets/bullet2.png')
+        this.load.image('bullet', './assets/bullet.png')
         this.load.image('menuBackground', './assets/menuBackground.png')
 
         // load spritesheet
@@ -50,6 +50,18 @@ class Menu extends Phaser.Scene {
             startFrame: 0,
             endFrame: 10
         })
+        this.load.spritesheet('Phineas', './assets/Phineas.png', {
+            frameWidth: 640,
+            frameHeight: 720,
+            startFrame: 0,
+            endFrame: 4
+        })
+        this.load.spritesheet('Buford', './assets/Buford.png', {
+            frameWidth: 396,
+            frameHeight: 630,
+            startFrame: 0,
+            endFrame: 4
+        })
 
         // load audio
         this.load.audio('jump-sfx', './assets/jump.wav')
@@ -59,17 +71,20 @@ class Menu extends Phaser.Scene {
         this.load.audio('gameover-sfx', './assets/gameover.wav')
         this.load.audio('select-sfx', './assets/select.wav')
         // this.load.audio('music-sfx', './assets/music.wav')
+
     }
 
     create() {
         // background
-        // this.menuBackground = this.add.image(0, 0, game.config.width, game.config.height, 'menubackground').setOrigin(0)
+        this.menuBackground = this.add.image(0, 0, 'menuBackground').setOrigin(0)
 
         let menuConfig = {
             fontFamily: 'Comic Sans MS',
             fontSize: '34px',
             fontStyle: 'bold',
-            color: '#FFFFFF',
+            color: '#000000',
+            stroke: '#FFFFFF',
+            strokeThickness: 10,
             align: 'center',
             padding: {
                 top: 10,
@@ -86,8 +101,8 @@ class Menu extends Phaser.Scene {
                 this.continue.visible = !this.continue.visible
             }
         })
-        menuConfig.fontSize = '80px'
-        this.add.text(game.config.width / 2, game.config.height / 2 - 150, "Jump N' Duck", menuConfig).setOrigin(0.5)
+        menuConfig.fontSize = '90px'
+        this.add.text(game.config.width / 2, game.config.height / 2 - 350, "Jump N' Duck", menuConfig).setOrigin(0.5)
 
 
         // enemy animation
@@ -110,8 +125,59 @@ class Menu extends Phaser.Scene {
             repeat: -1
         })
 
+        // Phineas animation
+        this.anims.create({
+            key: 'idle_Phineas',
+            frames: this.anims.generateFrameNumbers('Phineas', { start: 0, end: 0, first: 0 }),
+            frameRate: 15,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'jump_Phineas',
+            frames: this.anims.generateFrameNumbers('Phineas', { start: 3, end: 3, first: 3 }),
+            frameRate: 15,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'walk_Phineas',
+            frames: this.anims.generateFrameNumbers('Phineas', { start: 1, end: 2, first: 1 }),
+            frameRate: 15,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'duck_Phineas',
+            frames: this.anims.generateFrameNumbers('Phineas', { start: 4, end: 4, first: 4 }),
+            frameRate: 15,
+            repeat: -1
+        })
 
-        // candace animation
+        // Buford animation
+        this.anims.create({
+            key: 'idle_Buford',
+            frames: this.anims.generateFrameNumbers('Buford', { start: 0, end: 0, first: 0 }),
+            frameRate: 15,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'jump_Buford',
+            frames: this.anims.generateFrameNumbers('Buford', { start: 3, end: 3, first: 3 }),
+            frameRate: 15,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'walk_Buford',
+            frames: this.anims.generateFrameNumbers('Buford', { start: 1, end: 2, first: 1 }),
+            frameRate: 15,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'duck_Buford',
+            frames: this.anims.generateFrameNumbers('Buford', { start: 4, end: 4, first: 4 }),
+            frameRate: 15,
+            repeat: -1
+        })
+
+        // Candace animation
         this.anims.create({
             key: 'idle_Candace',
             frames: this.anims.generateFrameNumbers('Candace', { start: 0, end: 0, first: 0 }),
