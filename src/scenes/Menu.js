@@ -18,7 +18,7 @@ class Menu extends Phaser.Scene {
         this.load.image('hybrid', './assets/hybrid.png')
         this.load.image('hairdryer', './assets/hairdryer.png')
         this.load.image('laser', './assets/bullet.png')
-        
+
 
 
         // load spritesheet
@@ -85,6 +85,55 @@ class Menu extends Phaser.Scene {
         // display menu text
         this.add.text(game.config.width / 2, game.config.height / 2 + 20, 'Press Any Key To Continue', menuConfig).setOrigin(0.5)
         this.add.text(game.config.width / 2, game.config.height / 2 + 65, '', menuConfig).setOrigin(0.5)
+
+
+        // enemy animation
+        this.anims.create({
+            key: 'apples',
+            frames: this.anims.generateFrameNumbers('apple', { start: 0, end: 1, first: 0 }),
+            frameRate: 10,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'peaches',
+            frames: this.anims.generateFrameNumbers('peach', { start: 0, end: 1, first: 0 }),
+            frameRate: 10,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'birds',
+            frames: this.anims.generateFrameNumbers('bird', { start: 0, end: 1, first: 0 }),
+            frameRate: 8,
+            repeat: -1
+        })
+
+
+        // candace animation
+        this.anims.create({
+            key: 'idle_Candace',
+            frames: this.anims.generateFrameNumbers('Candace', { start: 0, end: 0, first: 0 }),
+            frameRate: 15,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'jump_Candace',
+            frames: this.anims.generateFrameNumbers('Candace', { start: 10, end: 10, first: 10 }),
+            frameRate: 15,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'walk_Candace',
+            frames: this.anims.generateFrameNumbers('Candace', { start: 2, end: 9, first: 2 }),
+            frameRate: 15,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'fire_Candace',
+            frames: this.anims.generateFrameNumbers('Candace', { start: 1, end: 1, first: 1 }),
+            frameRate: 15,
+            repeat: -1
+        })
+
 
         this.input.keyboard.on('keydown', () => {
             game.settings = { gameSpeed: 3 };

@@ -99,31 +99,11 @@ class Play extends Phaser.Scene {
 
 
             // character
-            this.chr = this.physics.add.sprite(150, this.map.height - 200, game.selectedCharacter).setScale(0.4).setDepth(5).setFrame(0)
+            this.chr = this.physics.add.sprite(150, this.map.height - 200, game.selectedCharacter).setScale(0.35).setDepth(5).setFrame(0)
             this.chrBodySizeX = this.chr.width * 0.4
             this.chrBodySizeY = this.chr.height * 0.95
             this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
             this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height - this.chr.body.height - 10)
-
-            // animation
-            this.anims.create({
-                key: 'walk',
-                frames: this.anims.generateFrameNumbers('Candace', { start: 2, end: 9, first: 2 }),
-                frameRate: 15,
-                repeat: -1
-            })
-            this.anims.create({
-                key: 'idle',
-                frames: this.anims.generateFrameNumbers('Candace', { start: 0, end: 0, first: 0 }),
-                frameRate: 15,
-                repeat: -1
-            })
-            this.anims.create({
-                key: 'fire',
-                frames: this.anims.generateFrameNumbers('Candace', { start: 1, end: 1, first: 1 }),
-                frameRate: 15,
-                repeat: -1
-            })
 
             // laser group
             this.lasers = this.createLasers()
@@ -156,26 +136,6 @@ class Play extends Phaser.Scene {
             groundTile.body.allowGravity = false
             this.ground.add(groundTile)
         }
-
-        // enemy animation
-        this.anims.create({
-            key: 'apples',
-            frames: this.anims.generateFrameNumbers('apple', { start: 0, end: 1, first: 0 }),
-            frameRate: 10,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'peaches',
-            frames: this.anims.generateFrameNumbers('peach', { start: 0, end: 1, first: 0 }),
-            frameRate: 10,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'birds',
-            frames: this.anims.generateFrameNumbers('bird', { start: 0, end: 1, first: 0 }),
-            frameRate: 8,
-            repeat: -1
-        })
 
         // Create enemy group
         this.enemies = this.physics.add.group()
@@ -272,29 +232,17 @@ class Play extends Phaser.Scene {
         this.physics.world.wrap(this.cloud2, this.cloud2.width / 2)
         this.physics.world.wrap(this.cloud3, this.cloud3.width / 2)
 
-        // jump
-        if (Phaser.Input.Keyboard.JustDown(keyUP) && this.chr.body.touching.down) {
-            this.chr.body.velocity.y = this.JUMP_VELOCITY
-            this.canJumpAgain = false
-            this.sound.play('jump-sfx')
-        }
-        if (this.chr.body.touching.down && !keyUP.isDown) {
-            this.canJumpAgain = true
-        }
-
         // duck
         if (game.gameMode == 'Mode1') {
             if (keyDOWN.isDown && this.chr.body.touching.down) {
                 if (!this.isDucking) {
                     this.isDucking = true
-                    // this.chr.setFrame(1)
                     this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY * 0.5)
                     this.chr.body.setOffset((this.chr.width - this.chrBodySizeX) / 2, this.chr.height * 0.5)
                     this.chr.body.velocity.x = 0
                 }
             } else if (this.isDucking) {
                 this.isDucking = false
-                // this.chr.setFrame(0)
                 this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY)
                 this.chr.body.setOffset((this.chr.width - this.chrBodySizeX) / 2, 0)
             }
@@ -304,22 +252,41 @@ class Play extends Phaser.Scene {
         if (keyLEFT.isDown && keyRIGHT.isDown && !this.isDucking && !this.isFiring) {
             this.isMoving = false
             this.chr.body.velocity.x = 0
-            this.chr.anims.play('idle', true)
-        } else if (keyLEFT.isDown && !this.isMoving && !this.isDucking && !this.isFiring) {
-            this.chr.body.velocity.x -= this.MOVE_VELOCITY
+            if (this.canJumpAgain) {
+                this.chr.anims.play('idle_Candace', true)
+            }
+        } else if (keyLEFT.isDown && !this.isDucking && !this.isFiring) {
+            this.chr.body.velocity.x = -this.MOVE_VELOCITY
             this.isMoving = true
             this.direction = -1
-            this.chr.anims.play('walk', true)
-        } else if (keyRIGHT.isDown && !this.isMoving && !this.isDucking && !this.isFiring) {
-            this.chr.body.velocity.x += this.MOVE_VELOCITY
+            if (this.canJumpAgain) {
+                this.chr.anims.play('walk_Candace', true)
+            }
+        } else if (keyRIGHT.isDown && !this.isDucking && !this.isFiring) {
+            this.chr.body.velocity.x = this.MOVE_VELOCITY
             this.isMoving = true
             this.direction = 1
-            this.chr.anims.play('walk', true)
+            if (this.canJumpAgain) {
+                this.chr.anims.play('walk_Candace', true)
+            }
         }
         if (!keyLEFT.isDown && !keyRIGHT.isDown && !this.isFiring) {
             this.isMoving = false
             this.chr.body.velocity.x = 0
-            this.chr.anims.play('idle', true)
+            if (this.canJumpAgain) {
+                this.chr.anims.play('idle_Candace', true)
+            }
+        }
+
+        // jump
+        if (this.chr.body.touching.down) {
+            this.canJumpAgain = true
+        }
+        if (Phaser.Input.Keyboard.JustDown(keyUP) && this.chr.body.touching.down) {
+            this.chr.body.velocity.y = this.JUMP_VELOCITY
+            this.canJumpAgain = false
+            this.chr.anims.play('jump_Candace')
+            this.sound.play('jump-sfx')
         }
 
         // flip character image
@@ -352,7 +319,7 @@ class Play extends Phaser.Scene {
                 this.isMoving = false
                 this.chr.body.velocity.x = 0
                 this.fire(this.chr.x, this.chr.y, this.direction)
-                this.chr.anims.play('fire', true)
+                this.chr.anims.play('fire_Candace', true)
                 this.time.delayedCall(100, () => { this.isFiring = false })
             }
 
