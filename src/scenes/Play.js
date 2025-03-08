@@ -17,6 +17,7 @@ class Play extends Phaser.Scene {
         this.justTakeDamage = false
         this.fullHealth = false
         this.spawnRange = 300
+        this.enemyReactTimer = 145
         this.direction = 1  // 1: facing right, -1: facing left
         this.enemySpeed = game.settings.gameSpeed * 10
 
@@ -24,7 +25,6 @@ class Play extends Phaser.Scene {
         this.score = 0
         this.health = 100
         this.gameOver = false
-        this.enemyReactTimer = 145
     }
 
     create() {
@@ -126,7 +126,7 @@ class Play extends Phaser.Scene {
             this.addPeach(game.gameMode)
             this.numEnemy = 45
 
-            // bullet group
+            // particle effects
             this.plasma = this.add.particles(0, 0, 'bullet', {
                 alpha: { start: 1, end: 0, ease: 'Cubic.easeIn' },
                 blendMode: Phaser.BlendModes.SCREEN,
@@ -135,13 +135,14 @@ class Play extends Phaser.Scene {
                 radial: false,
                 scale: { start: 1, end: 5, ease: 'Cubic.easeOut' }
             })
-
+            // bullet group
             this.bullets = this.add.existing(new Bullets(this.physics.world, this, { name: 'bullets' }))
             this.bullets.createMultiple({
                 key: 'bullet',
                 quantity: 6
             })
 
+            // check bullet and enemies collision
             this.physics.add.overlap(this.enemies, this.bullets, (enemy, bullet) => {
                 const { x, y } = bullet.body.center
                 enemy.destroy()
@@ -160,10 +161,11 @@ class Play extends Phaser.Scene {
             })
             this.physics.world.on('worldbounds', (body) => { body.gameObject.onWorldBounds() })
 
+            // score text
             this.scoreText = this.add.text(game.config.width / 2, 50, this.score, textConfig).setOrigin(0.5).setDepth(3).setScrollFactor(0)
 
         } else {
-            // console.log('Hacker')
+            console.log('Hacker')
         }
 
         // bgm
@@ -177,7 +179,6 @@ class Play extends Phaser.Scene {
         this.cloud1.body.setAllowGravity(false).setVelocityX(-100)
         this.cloud2.body.setAllowGravity(false).setVelocityX(-170)
         this.cloud3.body.setAllowGravity(false).setVelocityX(-130)
-
         this.cloud4 = this.physics.add.sprite(this.map.width / 2, this.map.height - 1100, 'cloud1').setScale(2).setDepth(0)
         this.cloud5 = this.physics.add.sprite(this.map.width - 900, this.map.height - 450, 'cloud2').setScale(3.4).setDepth(0)
         this.cloud6 = this.physics.add.sprite(this.map.width - 1850, this.map.height - 760, 'cloud3').setScale(2.8).setDepth(0)
@@ -257,7 +258,7 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.chr, this.enemies_bird, () => { this.takeDamage() })
 
         // speed increase after 15 seconds
-        // this.clock = this.time.addEvent({ delay: 3000, callback: () => {game.settings.gameSpeed + 2}, callbackScope: this, loop: true })
+        this.clock = this.time.addEvent({ delay: 3000, callback: () => {game.settings.gameSpeed + 2}, callbackScope: this, loop: true })
 
 
         // debug key listener (bind to D key)
@@ -268,6 +269,7 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        // only allow moving after the count down
         if (!this.start) {
             return
         } else {
@@ -435,8 +437,9 @@ class Play extends Phaser.Scene {
                 // win
             }
         } else if (game.gameMode == 'Mode2') {
+            // update score
             this.scoreText.text = Math.floor(this.score)
-            // // shooting
+            // shooting
             if (Phaser.Input.Keyboard.JustDown(keyZ) && !this.isFiring && this.chr.body.touching.down) {
                 this.isFiring = true
                 this.isMoving = false
@@ -473,20 +476,20 @@ class Play extends Phaser.Scene {
             this.enemies.children.iterate((enemy) => {
                 if (enemy && this.start) {
                     let justCollide = false
-                    // let edgeCheckX = enemy.x + (enemy.body.velocity.x > 0 ? 15 : -15); // Check forward
+                    // let edgeCheckX = enemy.x + (enemy.body.velocity.x > 0 ? 15 : -15)
                     // let edgeCheckY = enemy.y + 20; // Check slightly below enemy
-                    // let frontCheckX = enemy.x + (enemy.body.velocity.x > 0 ? 20 : -20); // Slightly ahead
+                    // let frontCheckX = enemy.x + (enemy.body.velocity.x > 0 ? 20 : -20)
 
                     // let onEdge = !this.plats.children.entries.some(plat =>
                     //     plat.getBounds().contains(edgeCheckX, edgeCheckY)
-                    // );
+                    // )
 
                     // let platformAhead = this.plats.children.entries.some(plat =>
                     //     plat.getBounds().contains(frontCheckX, enemy.y)
-                    // );
+                    // )
 
                     // if ((onEdge || platformAhead) && enemy.body.touching.down) {
-                    //     enemy.setVelocityY(this.JUMP_VELOCITY + 250);
+                    //     enemy.setVelocityY(this.JUMP_VELOCITY + 250)
                     // }
                 }
             })

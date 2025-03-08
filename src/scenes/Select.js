@@ -70,10 +70,13 @@ class Select extends Phaser.Scene {
     }
 
     update() {
+        // show the text after selecting a character
         if (this.firstSelect && !this.textAdded) {
             this.textAdded = true
             this.toStart = this.add.text(game.config.width / 2, 850, 'Press Z to Start', this.selectConfig).setOrigin(0.5)
         }
+        
+        // shining text
         if (!this.startShining && this.textAdded) {
             this.time.addEvent({
                 delay: 400, repeat: -1, callback: () => {
