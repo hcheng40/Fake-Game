@@ -16,7 +16,7 @@ class Menu extends Phaser.Scene {
         this.load.image('pipe1', './assets/pipe1.png')
         this.load.image('hybrid1', './assets/hybrid1.png')
         this.load.image('hybrid', './assets/hybrid.png')
-        this.load.image('laser', './assets/bullet.png')
+        this.load.image('bullet', './assets/bullet2.png')
         this.load.image('menuBackground', './assets/menuBackground.png')
 
         // load spritesheet
@@ -139,7 +139,7 @@ class Menu extends Phaser.Scene {
 
 
         this.input.keyboard.on('keydown', () => {
-            game.settings = { gameSpeed: 3 }
+            game.settings = { gameSpeed: 10 }
             this.sound.play('select-sfx', { volume: 0.5 })
             this.scene.start('selectScene')
         })
