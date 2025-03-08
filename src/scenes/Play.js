@@ -82,7 +82,7 @@ class Play extends Phaser.Scene {
                 this.chr.body.setOffset((this.chr.width * 0.8) / 2, this.chr.height * 0.2)
             } else {
                 this.chrBodySizeX = this.chr.width * 0.5
-                this.chrBodySizeY = this.chr.height  * 0.9
+                this.chrBodySizeY = this.chr.height * 0.9
                 this.chr.body.setSize(this.chrBodySizeX, this.chrBodySizeY).setCollideWorldBounds(true)
                 this.chr.body.setOffset((this.chr.width * 0.5) / 2, this.chr.height * 0.1)
             }
@@ -178,7 +178,7 @@ class Play extends Phaser.Scene {
         this.cloud2.body.setAllowGravity(false).setVelocityX(-170)
         this.cloud3.body.setAllowGravity(false).setVelocityX(-130)
 
-        this.cloud4 = this.physics.add.sprite(this.map.width / 2 , this.map.height - 1100, 'cloud1').setScale(2).setDepth(0)
+        this.cloud4 = this.physics.add.sprite(this.map.width / 2, this.map.height - 1100, 'cloud1').setScale(2).setDepth(0)
         this.cloud5 = this.physics.add.sprite(this.map.width - 900, this.map.height - 450, 'cloud2').setScale(3.4).setDepth(0)
         this.cloud6 = this.physics.add.sprite(this.map.width - 1850, this.map.height - 760, 'cloud3').setScale(2.8).setDepth(0)
         this.cloud4.body.setAllowGravity(false).setVelocityX(-200)
@@ -237,7 +237,7 @@ class Play extends Phaser.Scene {
         this.time.addEvent({ delay: 3500, repeat: 0, callback: () => { this.start = true } })
 
         // health bar
-        this.healthBar = this.add.sprite(0, 0, 'healthbar').setFrame(0).setVisible(false)
+        this.healthBar = this.add.sprite(0, 0, 'healthbar').setScale(1.2).setFrame(0).setVisible(false)
 
         // jump key
         keyZ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z)
@@ -441,7 +441,11 @@ class Play extends Phaser.Scene {
                 this.isFiring = true
                 this.isMoving = false
                 this.chr.body.velocity.x = 0
-                this.bullets.fire(this.chr.x + 5, this.chr.y - 15, 600, 0, this.direction)
+                if (this.direction == 1) {
+                    this.bullets.fire(this.chr.x + 10, this.chr.y - 15, 600, 0, this.direction)
+                } else {
+                    this.bullets.fire(this.chr.x - 10, this.chr.y - 15, 600, 0, this.direction)
+                }
                 this.chr.anims.play('fire_Candace', true)
                 this.sound.play('shot-sfx')
                 this.time.delayedCall(100, () => { this.isFiring = false })
@@ -489,16 +493,19 @@ class Play extends Phaser.Scene {
         }
 
         // health bar follows the character
-        this.healthBar.x = this.chr.x - 70
+        if (game.selectedCharacter == 'Phineas') {
+            this.healthBar.x = this.chr.x - 100
+        } else {
+            this.healthBar.x = this.chr.x - 70
+        }
         this.healthBar.y = this.chr.y - 50
 
         // gameover
-        // if (this.gameOver) {
-        //     this.sound.play('gameover-sfx')
-        //     this.clock.remove()
-        //     this.bgm.stop()
-        //     this.scene.start('gameOverScene', { score: this.score })
-        // }
+        if (this.gameOver) {
+            this.sound.play('gameover-sfx')
+            // this.bgm.stop()
+            this.scene.start('gameOverScene', { score: this.score })
+        }
     }
 
 

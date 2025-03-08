@@ -13,11 +13,12 @@ class GameOver extends Phaser.Scene {
 
         // display texts
         let scoreConfig = {
-            fontFamily: 'Courier',
+            fontFamily: 'Comic Sans MS',
             fontSize: '60px',
             fontStyle: 'bold',
-            backgroundColor: '#C18361',
-            color: '#342020',
+            color: '#000000',
+            stroke: '#AAFFDD',
+            strokeThickness: 20,
             align: 'center',
             padding: {
                 top: 5,
@@ -29,12 +30,10 @@ class GameOver extends Phaser.Scene {
         }
         this.gameOverText = this.add.text(game.config.width / 2, game.config.height / 2 - 250, 'GAMEOVER!!', scoreConfig).setOrigin(0.5)
         scoreConfig.fixedWidth = this.gameOverText.width
-        this.scoreText = this.add.text(game.config.width / 2, game.config.height / 2 - 180, 'SCORE: ' + this.score, scoreConfig).setOrigin(0.5)
-        scoreConfig.fontSize = '40px'
+        this.scoreText = this.add.text(game.config.width / 2, game.config.height / 2 - 150, 'SCORE: ' + this.score, scoreConfig).setOrigin(0.5)
+        scoreConfig.fontSize = '50px'
         scoreConfig.fixedWidth = 0
         this.add.text(game.config.width / 2, game.config.height / 2 + 300, 'Press (Z) to restart or (M) to the menu', scoreConfig).setOrigin(0.5)
-        
-        // this.add.rectangle(0, 0, game.config.width, game.config.height, 0x112222).setOrigin(0).setDepth(-1)
     }
 
     update() {
