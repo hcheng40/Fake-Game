@@ -107,104 +107,134 @@ class Menu extends Phaser.Scene {
         menuConfig.stroke = '#FFFFFF'
         menuConfig.fontSize = '120px'
         this.add.text(game.config.width / 2, game.config.height / 2 - 270, "Jump 'N Duck", menuConfig).setOrigin(0.5)
-        
+
         // enemy animation
-        this.anims.create({
-            key: 'apples',
-            frames: this.anims.generateFrameNumbers('apple', { start: 0, end: 1, first: 0 }),
-            frameRate: 10,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'peaches',
-            frames: this.anims.generateFrameNumbers('peach', { start: 0, end: 1, first: 0 }),
-            frameRate: 10,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'birds',
-            frames: this.anims.generateFrameNumbers('bird', { start: 0, end: 1, first: 0 }),
-            frameRate: 8,
-            repeat: -1
-        })
+        if (!this.anims.exists('apples')) {
+            this.anims.create({
+                key: 'apples',
+                frames: this.anims.generateFrameNumbers('apple', { start: 0, end: 1, first: 0 }),
+                frameRate: 10,
+                repeat: -1
+            })
+        }
+        if (!this.anims.exists('peaches')) {
+            this.anims.create({
+                key: 'peaches',
+                frames: this.anims.generateFrameNumbers('peach', { start: 0, end: 1, first: 0 }),
+                frameRate: 10,
+                repeat: -1
+            })
+        }
+        if (!this.anims.exists('birds')) {
+            this.anims.create({
+                key: 'birds',
+                frames: this.anims.generateFrameNumbers('bird', { start: 0, end: 1, first: 0 }),
+                frameRate: 8,
+                repeat: -1
+            })
+        }
 
         // Phineas animation
-        this.anims.create({
-            key: 'idle_Phineas',
-            frames: this.anims.generateFrameNumbers('Phineas', { start: 0, end: 0, first: 0 }),
-            frameRate: 15,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'jump_Phineas',
-            frames: this.anims.generateFrameNumbers('Phineas', { start: 3, end: 3, first: 3 }),
-            frameRate: 15,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'walk_Phineas',
-            frames: this.anims.generateFrameNumbers('Phineas', { start: 1, end: 2, first: 1 }),
-            frameRate: 15,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'duck_Phineas',
-            frames: this.anims.generateFrameNumbers('Phineas', { start: 4, end: 4, first: 4 }),
-            frameRate: 15,
-            repeat: -1
-        })
+        if (!this.anims.exists('idle_Phineas')) {
+            this.anims.create({
+                key: 'idle_Phineas',
+                frames: this.anims.generateFrameNumbers('Phineas', { start: 0, end: 0, first: 0 }),
+                frameRate: 15,
+                repeat: -1
+            })
+        }
+        if (!this.anims.exists('jump_Phineas')) {
+            this.anims.create({
+                key: 'jump_Phineas',
+                frames: this.anims.generateFrameNumbers('Phineas', { start: 3, end: 3, first: 3 }),
+                frameRate: 15,
+                repeat: -1
+            })
+        }
+        if (!this.anims.exists('walk_Phineas')) {
+            this.anims.create({
+                key: 'walk_Phineas',
+                frames: this.anims.generateFrameNumbers('Phineas', { start: 1, end: 2, first: 1 }),
+                frameRate: 15,
+                repeat: -1
+            })
+        }
+        if (!this.anims.exists('duck_Phineas')) {
+            this.anims.create({
+                key: 'duck_Phineas',
+                frames: this.anims.generateFrameNumbers('Phineas', { start: 4, end: 4, first: 4 }),
+                frameRate: 15,
+                repeat: -1
+            })
+        }
 
         // Buford animation
-        this.anims.create({
-            key: 'idle_Buford',
-            frames: this.anims.generateFrameNumbers('Buford', { start: 0, end: 0, first: 0 }),
-            frameRate: 15,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'jump_Buford',
-            frames: this.anims.generateFrameNumbers('Buford', { start: 3, end: 3, first: 3 }),
-            frameRate: 15,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'walk_Buford',
-            frames: this.anims.generateFrameNumbers('Buford', { start: 1, end: 2, first: 1 }),
-            frameRate: 15,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'duck_Buford',
-            frames: this.anims.generateFrameNumbers('Buford', { start: 4, end: 4, first: 4 }),
-            frameRate: 15,
-            repeat: -1
-        })
+        if (!this.anims.exists('idle_Buford')) {
+            this.anims.create({
+                key: 'idle_Buford',
+                frames: this.anims.generateFrameNumbers('Buford', { start: 0, end: 0, first: 0 }),
+                frameRate: 15,
+                repeat: -1
+            })
+        }
+        if (!this.anims.exists('jump_Buford')) {
+            this.anims.create({
+                key: 'jump_Buford',
+                frames: this.anims.generateFrameNumbers('Buford', { start: 3, end: 3, first: 3 }),
+                frameRate: 15,
+                repeat: -1
+            })
+        }
+        if (!this.anims.exists('walk_Buford')) {
+            this.anims.create({
+                key: 'walk_Buford',
+                frames: this.anims.generateFrameNumbers('Buford', { start: 1, end: 2, first: 1 }),
+                frameRate: 15,
+                repeat: -1
+            })
+        }
+        if (!this.anims.exists('duck_Buford')) {
+            this.anims.create({
+                key: 'duck_Buford',
+                frames: this.anims.generateFrameNumbers('Buford', { start: 4, end: 4, first: 4 }),
+                frameRate: 15,
+                repeat: -1
+            })
+        }
 
         // Candace animation
-        this.anims.create({
-            key: 'idle_Candace',
-            frames: this.anims.generateFrameNumbers('Candace', { start: 0, end: 0, first: 0 }),
-            frameRate: 15,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'jump_Candace',
-            frames: this.anims.generateFrameNumbers('Candace', { start: 10, end: 10, first: 10 }),
-            frameRate: 15,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'walk_Candace',
-            frames: this.anims.generateFrameNumbers('Candace', { start: 2, end: 9, first: 2 }),
-            frameRate: 15,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'fire_Candace',
-            frames: this.anims.generateFrameNumbers('Candace', { start: 1, end: 1, first: 1 }),
-            frameRate: 15,
-            repeat: -1
-        })
+        if (!this.anims.exists('idle_Candace')) {
+            this.anims.create({
+                key: 'idle_Candace',
+                frames: this.anims.generateFrameNumbers('Candace', { start: 0, end: 0, first: 0 }),
+                frameRate: 15,
+                repeat: -1
+            })
+        }
+        if (!this.anims.exists('jump_Candace')) {
+            this.anims.create({
+                key: 'jump_Candace',
+                frames: this.anims.generateFrameNumbers('Candace', { start: 10, end: 10, first: 10 }),
+                frameRate: 15,
+                repeat: -1
+            })
+        }
+        if (!this.anims.exists('walk_Candace')) {
+            this.anims.create({
+                key: 'walk_Candace',
+                frames: this.anims.generateFrameNumbers('Candace', { start: 2, end: 9, first: 2 }),
+                frameRate: 15,
+                repeat: -1
+            })
+        }
+        if (!this.anims.exists('fire_Candace')) {
+            this.anims.create({
+                key: 'fire_Candace',
+                frames: this.anims.generateFrameNumbers('Candace', { start: 1, end: 1, first: 1 }),
+                frameRate: 15,
+                repeat: -1
+            })
+        }
 
 
         this.input.keyboard.on('keydown', () => {
