@@ -22,7 +22,7 @@ class Select extends Phaser.Scene {
             color: '#FFFFFF',
             align: 'center'
         }
-        this.add.text(game.config.width / 2, 150, 'Select Your Character', this.selectConfig).setOrigin(0.5)
+        this.add.text(game.config.width / 2, 150, 'Select Your Character ▲▼', this.selectConfig).setOrigin(0.5)
 
         // character list
         this.characters = [
@@ -115,7 +115,7 @@ class Select extends Phaser.Scene {
         // update text style
         this.characterTexts.forEach((text, i) => {
             if (i == this.Index) {
-                text.setText(`< ${this.characters[i].name} >`).setStyle({ color: '#000000', strokeThickness: 20 })
+                text.setText(`<< ${this.characters[i].name} >>`).setStyle({ color: '#000000', strokeThickness: 20 })
             } else {
                 text.setText(this.characters[i].name).setStyle({ color: '#FFFFFF', strokeThickness: 0 })
             }
