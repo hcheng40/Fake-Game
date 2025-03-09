@@ -10,6 +10,7 @@ class Menu extends Phaser.Scene {
         // load images/tile sprites
         this.load.image('map', 'img/map.png')
         this.load.image('map2', 'img/map2.png')
+        this.load.image('map3', 'img/map3.png')
         this.load.image('ground', 'img/ground.png')
         this.load.image('cloud1', 'img/cloud1.png')
         this.load.image('cloud2', 'img/cloud2.png')
@@ -19,9 +20,12 @@ class Menu extends Phaser.Scene {
         this.load.image('pipe1', 'img/pipe1.png')
         this.load.image('hybrid1', 'img/hybrid1.png')
         this.load.image('hybrid', 'img/hybrid.png')
+        this.load.image('rock1', 'img/rock1.png')
+        this.load.image('rock2', 'img/rock2.png')
         this.load.image('bullet', 'img/bullet.png')
         this.load.image('menuBackground', 'img/menuBackground.png')
         this.load.image('gameover', 'img/gameover.png')
+        this.load.image('win', 'img/win.png')
 
         // load spritesheet
         this.load.spritesheet('healthbar', 'img/healthbar.png', {

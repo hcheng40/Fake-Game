@@ -33,7 +33,7 @@ class GameOver extends Phaser.Scene {
         }
         this.gameOverText = this.add.text(game.config.width / 2, game.config.height / 2 - 380, 'GAMEOVER!!', scoreConfig).setOrigin(0.5)
         if (game.gameMode == 'Mode1') {
-            this.scoreText = this.add.text(game.config.width / 2, game.config.height / 2 - 250, 'Survive time: ' + this.score, scoreConfig).setOrigin(0.5)
+            this.scoreText = this.add.text(game.config.width / 2, game.config.height / 2 - 250, 'Survival time: ' + this.score, scoreConfig).setOrigin(0.5)
         } else {
             this.scoreText = this.add.text(game.config.width / 2, game.config.height / 2 - 250, 'SCORE: ' + this.score, scoreConfig).setOrigin(0.5)
         }

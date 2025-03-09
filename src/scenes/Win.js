@@ -14,11 +14,11 @@ class Win extends Phaser.Scene {
         // display texts
         let scoreConfig = {
             fontFamily: 'Comic Sans MS',
-            fontSize: '90px',
+            fontSize: '130px',
             fontStyle: 'bold',
-            color: '#000000',
-            stroke: '#AAFFDD',
-            strokeThickness: 20,
+            color: '#FF0000',
+            stroke: '#000000',
+            strokeThickness: 25,
             align: 'center',
             padding: {
                 top: 5,
@@ -28,10 +28,9 @@ class Win extends Phaser.Scene {
             },
             fixedWidth: 0
         }
-        this.winText = this.add.text(game.config.width / 2, game.config.height / 2 - 400, 'You win!!', scoreConfig).setOrigin(0.5)
-        // this.scoreText = this.add.text(game.config.width / 2, game.config.height / 2 - 250, 'SCORE: ' + this.score, scoreConfig).setOrigin(0.5)
+        this.winText = this.add.text(game.config.width / 2, game.config.height / 2 - 150, 'You win !!', scoreConfig).setOrigin(0.5)
         scoreConfig.fontSize = '60px'
-        this.add.text(game.config.width / 2, game.config.height / 2 + 400, 'Press (Z) to restart or (M) to the menu', scoreConfig).setOrigin(0.5)
+        this.add.text(game.config.width / 2, game.config.height / 2 + 400, 'Press (R) to restart or (M) to the menu', scoreConfig).setOrigin(0.5)
     }
 
     update() {

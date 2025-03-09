@@ -16,7 +16,7 @@ class Play extends Phaser.Scene {
         this.start = false
         this.justTakeDamage = false
         this.fullHealth = false
-        this.spawnRange = 300
+        this.spawnRange = 150
         this.enemyReactTimer = 145
         this.direction = 1  // 1: facing right, -1: facing left
         this.enemySpeed = game.settings.gameSpeed * 10
@@ -50,28 +50,52 @@ class Play extends Phaser.Scene {
         // different game mode
         if (game.gameMode == 'Mode1') {
             // background
-            this.map = this.add.image(0, 0, 'map').setOrigin(0)
+            if (game.selectedCharacter == 'Phineas') {
+                this.map = this.add.image(0, 0, 'map3').setOrigin(0)
+            } else {
+                this.map = this.add.image(0, 0, 'map').setOrigin(0)
+            }
 
             // platforms
             this.plats = this.add.group()
-            // low
-            this.createPlatform(300, 1300, 'wood2').setDepth(1)
-            this.createPlatform(600, 1200, 'wood2').setDepth(1)
-            this.createPlatform(1000, 1100, 'wood2').setDepth(1)
-            this.createPlatform(1500, 1000, 'wood2').setDepth(1)
-            this.createPlatform(2000, 900, 'wood2').setDepth(1)
-            this.createPlatform(2500, 850, 'wood2').setDepth(1)
-            // mid
-            this.createPlatform(800, 800, 'hybrid', 0.5).setDepth(1)
-            this.createPlatform(1400, 700, 'hybrid', 0.5).setDepth(1)
-            this.createPlatform(1800, 600, 'hybrid', 0.5).setDepth(1)
-            this.createPlatform(2300, 550, 'hybrid', 0.5).setDepth(1)
             // high
-            this.createPlatform(400, 500, 'pipe1').setDepth(1)
-            this.createPlatform(1000, 400, 'pipe1').setDepth(1)
-            this.createPlatform(1700, 300, 'pipe1').setDepth(1)
-            this.createPlatform(2200, 250, 'pipe1').setDepth(1)
-
+            this.createPlatform(2970, 200, 'pipe1')
+            this.createPlatform(790, 240, 'pipe1')
+            this.createPlatform(2200, 250, 'pipe1')
+            this.createPlatform(2095, 250, 'pipe1')
+            this.createPlatform(1700, 300, 'pipe1')
+            this.createPlatform(230, 300, 'pipe1')
+            this.createPlatform(2400, 380, 'pipe1')
+            this.createPlatform(2850, 380, 'pipe1')
+            this.createPlatform(900, 400, 'pipe1')
+            this.createPlatform(1400, 405, 'pipe1')
+            this.createPlatform(500, 500, 'pipe1')
+            this.createPlatform(1100, 550, 'pipe1')
+            // mid
+            this.createPlatform(2450, 550, 'hybrid', 0.5)
+            this.createPlatform(1800, 600, 'hybrid', 0.5)
+            this.createPlatform(3000, 660, 'hybrid', 0.5)
+            this.createPlatform(280, 700, 'pipe1')
+            this.createPlatform(1400, 700, 'hybrid', 0.5)
+            this.createPlatform(800, 800, 'hybrid', 0.5)
+            // low
+            this.createPlatform(2500, 800, 'wood2')
+            this.createPlatform(-100, 880, 'wood2')
+            this.createPlatform(1200, 880, 'wood1')
+            this.createPlatform(1800, 900, 'wood2')
+            this.createPlatform(2300, 950, 'wood1')
+            this.createPlatform(430, 930, 'wood1')
+            this.createPlatform(2850, 980, 'wood1')
+            this.createPlatform(1400, 1000, 'wood1')
+            this.createPlatform(950, 1030, 'wood2')
+            this.createPlatform(200, 1050, 'wood1')
+            this.createPlatform(2000, 1100, 'wood2')
+            this.createPlatform(2800, 1180, 'wood2')
+            this.createPlatform(1550, 1180, 'wood2')
+            this.createPlatform(600, 1180, 'wood2')
+            this.createPlatform(2400, 1280, 'wood2')
+            this.createPlatform(1000, 1280, 'wood2')
+            this.createPlatform(300, 1280, 'wood2')
 
             // character
             this.chr = this.physics.add.sprite(150, this.map.height - 200, game.selectedCharacter).setScale(0.25).setDepth(5).setFrame(0)
@@ -110,6 +134,36 @@ class Play extends Phaser.Scene {
 
             // platforms
             this.plats = this.add.group()
+            // high
+            this.createPlatform(1700, 300, 'rock1', 0.39)
+            this.createPlatform(2780, 300, 'rock1', 0.37)
+            this.createPlatform(2400, 330, 'rock1', 0.34)
+            this.createPlatform(2440, 330, 'rock1', 0.34)
+            this.createPlatform(790, 340, 'rock1', 0.39)
+            this.createPlatform(1300, 360, 'rock2', 0.26)
+            this.createPlatform(220, 400, 'rock2', 0.26)
+            this.createPlatform(2100, 400, 'rock2', 0.28)
+            // mid
+            this.createPlatform(490, 550, 'rock1', 0.39)
+            this.createPlatform(1100, 550, 'rock1', 0.39)
+            this.createPlatform(2400, 600, 'rock2', 0.28)
+            this.createPlatform(280, 700, 'rock1', 0.39)
+            this.createPlatform(1570, 700, 'rock2', 0.28)
+            this.createPlatform(2180, 790, 'rock1', 0.38)
+            this.createPlatform(750, 800, 'rock2', 0.28)
+            // low
+            this.createPlatform(1800, 900, 'rock2', 0.28)
+            this.createPlatform(2580, 900, 'rock2', 0.28)
+            this.createPlatform(410, 980, 'rock1', 0.39)
+            this.createPlatform(1400, 1000, 'rock1', 0.39)
+            this.createPlatform(950, 1070, 'rock2', 0.28)
+            this.createPlatform(-50, 1100, 'rock2', 0.28)
+            this.createPlatform(2000, 1100, 'rock2', 0.28)
+            this.createPlatform(2200, 1100, 'rock1', 0.39)
+            this.createPlatform(2800, 1180, 'rock2', 0.28)
+            this.createPlatform(300, 1280, 'rock2', 0.28)
+            this.createPlatform(1000, 1280, 'rock2', 0.28)
+            this.createPlatform(2400, 1280, 'rock2', 0.28)
 
 
             // character
@@ -238,7 +292,7 @@ class Play extends Phaser.Scene {
         this.time.addEvent({ delay: 3500, repeat: 0, callback: () => { this.start = true } })
 
         // health bar
-        this.healthBar = this.add.sprite(0, 0, 'healthbar').setScale(1.2).setFrame(0).setVisible(false)
+        this.healthBar = this.add.sprite(0, 0, 'healthbar').setScale(1.2).setFrame(0).setVisible(false).setDepth(4)
 
         // jump key
         keyZ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z)
@@ -520,7 +574,7 @@ class Play extends Phaser.Scene {
 
     // funciton to create platforms
     createPlatform(x, y, key, scale = 0.8) {
-        let plat = this.physics.add.sprite(x, y, key).setScale(scale)
+        let plat = this.physics.add.sprite(x, y, key).setScale(scale).setDepth(1)
         plat.body.setImmovable(true)
         plat.body.allowGravity = false
         plat.body.checkCollision.down = false
