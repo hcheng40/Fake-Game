@@ -21,6 +21,7 @@ class Menu extends Phaser.Scene {
         this.load.image('hybrid', 'img/hybrid.png')
         this.load.image('bullet', 'img/bullet.png')
         this.load.image('menuBackground', 'img/menuBackground.png')
+        this.load.image('gameover', 'img/gameover.png')
 
         // load spritesheet
         this.load.spritesheet('healthbar', 'img/healthbar.png', {

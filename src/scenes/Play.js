@@ -55,7 +55,7 @@ class Play extends Phaser.Scene {
             // platforms
             this.plats = this.add.group()
             // low
-            this.createPlatform(300, 1350, 'wood2').setDepth(1)
+            this.createPlatform(300, 1300, 'wood2').setDepth(1)
             this.createPlatform(600, 1200, 'wood2').setDepth(1)
             this.createPlatform(1000, 1100, 'wood2').setDepth(1)
             this.createPlatform(1500, 1000, 'wood2').setDepth(1)
@@ -258,7 +258,7 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.chr, this.enemies_bird, () => { this.takeDamage() })
 
         // speed increase after 15 seconds
-        this.clock = this.time.addEvent({ delay: 3000, callback: () => {game.settings.gameSpeed + 2}, callbackScope: this, loop: true })
+        this.clock = this.time.addEvent({ delay: 3000, callback: () => { game.settings.gameSpeed + 2 }, callbackScope: this, loop: true })
 
 
         // debug key listener (bind to D key)
@@ -434,7 +434,8 @@ class Play extends Phaser.Scene {
                 }
             })
             if (this.timeLeft <= 0) {
-                // win
+                // this.bgm.stop()
+                this.scene.start('winScene')
             }
         } else if (game.gameMode == 'Mode2') {
             // update score
@@ -507,7 +508,12 @@ class Play extends Phaser.Scene {
         if (this.gameOver) {
             this.sound.play('gameover-sfx')
             // this.bgm.stop()
-            this.scene.start('gameOverScene', { score: this.score })
+            if (game.gameMode == 'Mode1') {
+                this.surviveTime = 60 - this.timeLeft
+                this.scene.start('gameOverScene', { score: this.surviveTime })
+            } else {
+                this.scene.start('gameOverScene', { score: this.score })
+            }
         }
     }
 

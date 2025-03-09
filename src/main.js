@@ -17,11 +17,11 @@ let config = {
             }
         }
     },
-    scene: [Menu, Select, Play, GameOver]
+    scene: [Menu, Select, Play, GameOver, Win]
 }
 
 let game = new Phaser.Game(config)
 
 // keys
-let keyZ, keyM, keyUP, keyDOWN, keyLEFT, keyRIGHT
+let keyZ, keyM, keyR, keyUP, keyDOWN, keyLEFT, keyRIGHT
 let mouseX, mouseY, cursors
