@@ -455,45 +455,45 @@ class Play extends Phaser.Scene {
                 this.time.delayedCall(100, () => { this.isFiring = false })
             }
 
-            // enemy X movement
-            if (this.enemyReactTimer > 150) {
-                this.enemies.children.iterate((enemy) => {
-                    if (enemy && this.start) {
-                        let angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.chr.x, this.chr.y)
-                        let speed = 120
-                        let v_x = Math.cos(angle) * speed
-                        enemy.setVelocityX(v_x)
-                        if (v_x < 0) {
-                            enemy.setFlip(true, false)
-                        } else if (v_x > 0) {
-                            enemy.resetFlip()
-                        }
-                    }
-                })
-                this.enemyReactTimer = 0
-            }
-            this.enemyReactTimer++
+            // // enemy X movement
+            // if (this.enemyReactTimer > 150) {
+            //     this.enemies.children.iterate((enemy) => {
+            //         if (enemy && this.start) {
+            //             let angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.chr.x, this.chr.y)
+            //             let speed = 120
+            //             let v_x = Math.cos(angle) * speed
+            //             enemy.setVelocityX(v_x)
+            //             if (v_x < 0) {
+            //                 enemy.setFlip(true, false)
+            //             } else if (v_x > 0) {
+            //                 enemy.resetFlip()
+            //             }
+            //         }
+            //     })
+            //     this.enemyReactTimer = 0
+            // }
+            // this.enemyReactTimer++
 
-            this.enemies.children.iterate((enemy) => {
-                if (enemy && this.start) {
-                    let justCollide = false
-                    // let edgeCheckX = enemy.x + (enemy.body.velocity.x > 0 ? 15 : -15)
-                    // let edgeCheckY = enemy.y + 20; // Check slightly below enemy
-                    // let frontCheckX = enemy.x + (enemy.body.velocity.x > 0 ? 20 : -20)
+            // this.enemies.children.iterate((enemy) => {
+            //     if (enemy && this.start) {
+            //         let justCollide = false
+            //         // let edgeCheckX = enemy.x + (enemy.body.velocity.x > 0 ? 15 : -15)
+            //         // let edgeCheckY = enemy.y + 20; // Check slightly below enemy
+            //         // let frontCheckX = enemy.x + (enemy.body.velocity.x > 0 ? 20 : -20)
 
-                    // let onEdge = !this.plats.children.entries.some(plat =>
-                    //     plat.getBounds().contains(edgeCheckX, edgeCheckY)
-                    // )
+            //         // let onEdge = !this.plats.children.entries.some(plat =>
+            //         //     plat.getBounds().contains(edgeCheckX, edgeCheckY)
+            //         // )
 
-                    // let platformAhead = this.plats.children.entries.some(plat =>
-                    //     plat.getBounds().contains(frontCheckX, enemy.y)
-                    // )
+            //         // let platformAhead = this.plats.children.entries.some(plat =>
+            //         //     plat.getBounds().contains(frontCheckX, enemy.y)
+            //         // )
 
-                    // if ((onEdge || platformAhead) && enemy.body.touching.down) {
-                    //     enemy.setVelocityY(this.JUMP_VELOCITY + 250)
-                    // }
-                }
-            })
+            //         // if ((onEdge || platformAhead) && enemy.body.touching.down) {
+            //         //     enemy.setVelocityY(this.JUMP_VELOCITY + 250)
+            //         // }
+            //     }
+            // })
         }
 
         // health bar follows the character
