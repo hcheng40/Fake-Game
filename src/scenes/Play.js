@@ -479,14 +479,6 @@ class Play extends Phaser.Scene {
         // enemy movement
         if (game.gameMode == 'Mode1') {
             this.timeText.text = Math.floor(this.timeLeft)
-            // destroy enemy outside the map
-            this.enemies.children.iterate((enemy) => {
-                if (enemy && this.start) {
-                    if (enemy.x >= this.map.width + 100 || enemy.x <= -100) {
-                        enemy.destroy()
-                    }
-                }
-            })
             if (this.timeLeft <= 0) {
                 // this.bgm.stop()
                 this.scene.start('winScene')
@@ -549,6 +541,15 @@ class Play extends Phaser.Scene {
             //     }
             // })
         }
+
+        // destroy enemy outside the map
+        this.enemies.children.iterate((enemy) => {
+            if (enemy && this.start) {
+                if (enemy.x >= this.map.width + 100 || enemy.x <= -100) {
+                    enemy.destroy()
+                }
+            }
+        })
 
         // health bar follows the character
         if (game.selectedCharacter == 'Phineas') {

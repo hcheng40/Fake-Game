@@ -88,10 +88,10 @@ class Menu extends Phaser.Scene {
 
         let menuConfig = {
             fontFamily: 'Comic Sans MS',
-            fontSize: '34px',
+            fontSize: '45px',
             fontStyle: 'bold',
-            color: '#000000',
-            stroke: '#AAFFDD',
+            color: '#EE0000',
+            stroke: '#99FFCC',
             strokeThickness: 20,
             align: 'center',
             padding: {
@@ -103,9 +103,9 @@ class Menu extends Phaser.Scene {
             fixedWidth: 0
         }
         // display menu text
-        this.continue = this.add.text(game.config.width / 2, game.config.height / 2 + 300, 'Press Any Key To Continue', menuConfig).setOrigin(0.5)
+        this.continue = this.add.text(game.config.width / 2 + 32, game.config.height / 2 + 310, 'Press Any Key To Continue', menuConfig).setOrigin(0.5)
         this.time.addEvent({
-            delay: 400, repeat: -1, callback: () => {
+            delay: 1000, repeat: -1, callback: () => {
                 this.continue.visible = !this.continue.visible
             }
         })
