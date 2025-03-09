@@ -78,13 +78,17 @@ class Menu extends Phaser.Scene {
         this.load.audio('score-sfx', 'sfx/score.wav')
         this.load.audio('gameover-sfx', 'sfx/gameover.wav')
         this.load.audio('select-sfx', 'sfx/select.wav')
-        // this.load.audio('music-sfx', 'sfx/music.wav')
-
+        this.load.audio('bgm', 'sfx/bgm_BossTime.mp3')
+        this.load.audio('menubgm', 'sfx/bgm_8-BitMenu.mp3')
     }
 
     create() {
         // background
         this.menuBackground = this.add.image(0, 0, 'menuBackground').setOrigin(0)
+
+        // bgm
+        this.menubgm = this.sound.add('menubgm', { loop: true, volume: 0.4, rate: 0.97 })
+        this.menubgm.play()
 
         let menuConfig = {
             fontFamily: 'Comic Sans MS',
@@ -109,10 +113,7 @@ class Menu extends Phaser.Scene {
                 this.continue.visible = !this.continue.visible
             }
         })
-        // menuConfig.stroke = '#FFFFFF'
-        // menuConfig.fontSize = '120px'
-        // this.add.text(game.config.width / 2, game.config.height / 2 - 270, "Jump 'N Duck", menuConfig).setOrigin(0.5)
-
+        
         // enemy animation
         if (!this.anims.exists('apples')) {
             this.anims.create({
@@ -245,6 +246,7 @@ class Menu extends Phaser.Scene {
         this.input.keyboard.on('keydown', () => {
             game.settings = { gameSpeed: 10 }
             this.sound.play('select-sfx', { volume: 0.5 })
+            this.menubgm.stop()
             this.scene.start('selectScene')
         })
     }

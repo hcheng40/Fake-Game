@@ -116,7 +116,7 @@ class Play extends Phaser.Scene {
             this.enemies_bird = this.physics.add.group()
             this.addApple(game.gameMode)
             this.addPeach(game.gameMode)
-            this.numEnemy = 35
+            this.numEnemy = 20
 
             // play clock count down
             this.timeLeft = 60
@@ -221,10 +221,10 @@ class Play extends Phaser.Scene {
         } else {
             console.log('Hacker')
         }
-
+        
         // bgm
-        // this.bgm = this.sound.add('bgm', { loop: true })
-        // this.bgm.play()
+        this.bgm = this.sound.add('bgm', { loop: true, volume: 0.3, rate: 0.93 })
+        this.bgm.play()
 
         // clouds
         this.cloud1 = this.physics.add.sprite(this.map.width - 90, this.map.height - 900, 'cloud1').setScale(2.5).setDepth(0)
@@ -480,7 +480,7 @@ class Play extends Phaser.Scene {
         if (game.gameMode == 'Mode1') {
             this.timeText.text = Math.floor(this.timeLeft)
             if (this.timeLeft <= 0) {
-                // this.bgm.stop()
+                this.bgm.stop()
                 this.scene.start('winScene')
             }
         } else if (game.gameMode == 'Mode2') {
@@ -562,7 +562,7 @@ class Play extends Phaser.Scene {
         // gameover
         if (this.gameOver) {
             this.sound.play('gameover-sfx')
-            // this.bgm.stop()
+            this.bgm.stop()
             if (game.gameMode == 'Mode1') {
                 this.surviveTime = 60 - this.timeLeft
                 this.scene.start('gameOverScene', { score: this.surviveTime })

@@ -4,6 +4,10 @@ class Select extends Phaser.Scene {
     }
 
     create() {
+        // bgm
+        this.menubgm = this.sound.add('menubgm', { loop: true, volume: 0.4, rate: 0.97 })
+        this.menubgm.play()
+
         // variables
         this.Index = 0
         this.firstSelect = false
@@ -64,6 +68,7 @@ class Select extends Phaser.Scene {
                 } else if (game.selectedCharacter == 'Candace') {
                     game.gameMode = 'Mode2'
                 }
+                this.menubgm.stop()
                 this.scene.start('playScene')
             }
         })
@@ -75,7 +80,7 @@ class Select extends Phaser.Scene {
             this.textAdded = true
             this.toStart = this.add.text(game.config.width / 2, 850, 'Press Z to Start', this.selectConfig).setOrigin(0.5)
         }
-        
+
         // shining text
         if (!this.startShining && this.textAdded) {
             this.time.addEvent({
@@ -111,10 +116,8 @@ class Select extends Phaser.Scene {
         this.characterTexts.forEach((text, i) => {
             if (i == this.Index) {
                 text.setText(`< ${this.characters[i].name} >`).setStyle({ color: '#000000', strokeThickness: 20 })
-                // text.setText(`< ${this.characters[i].name} >`).setStyle({ fontStyle: 'bold' })
             } else {
                 text.setText(this.characters[i].name).setStyle({ color: '#FFFFFF', strokeThickness: 0 })
-                // text.setText(this.characters[i].name).setStyle({ fontStyle: 'normal' })
             }
         })
     }
