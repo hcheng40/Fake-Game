@@ -1,6 +1,11 @@
 // Hao-Tien Cheng
 // Fake Game: Jump 'N Duck
 
+// credits: https://www.fesliyanstudios.com/royalty-free-music
+//          https://phaser.io/examples/v3.85.0
+//          https://www.youtube.com/watch?v=zr_r2duvxic
+//          https://phineasandferb.fandom.com/wiki/Gaming_the_System
+
 
 
 let config = {
