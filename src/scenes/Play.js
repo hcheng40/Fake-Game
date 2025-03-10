@@ -178,7 +178,7 @@ class Play extends Phaser.Scene {
             this.enemies_bird = this.physics.add.group()
             this.addApple(game.gameMode)
             this.addPeach(game.gameMode)
-            this.numEnemy = 45
+            this.numEnemy = 50
 
             // particle effects
             this.plasma = this.add.particles(0, 0, 'bullet', {
@@ -312,14 +312,13 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.chr, this.enemies_bird, () => { this.takeDamage() })
 
         // speed increase after 15 seconds
-        this.clock = this.time.addEvent({ delay: 3000, callback: () => { game.settings.gameSpeed + 2 }, callbackScope: this, loop: true })
-
+        this.clock = this.time.addEvent({ delay: 5000, callback: () => { game.settings.gameSpeed + 2 }, callbackScope: this, loop: true })
 
         // debug key listener (bind to D key)
-        this.input.keyboard.on('keydown-D', function () {
-            this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
-            this.physics.world.debugGraphic.clear()
-        }, this)
+        // this.input.keyboard.on('keydown-D', function () {
+        //     this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
+        //     this.physics.world.debugGraphic.clear()
+        // }, this)
     }
 
     update() {
