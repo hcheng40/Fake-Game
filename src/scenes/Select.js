@@ -69,7 +69,7 @@ class Select extends Phaser.Scene {
                     game.gameMode = 'Mode2'
                 }
                 this.menubgm.stop()
-                this.scene.start('playScene')
+                this.scene.start('tutorialScene')
             }
         })
     }
