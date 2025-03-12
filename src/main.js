@@ -43,4 +43,3 @@ let game = new Phaser.Game(config)
 
 // keys
 let keyZ, keyM, keyR, keyC, keyUP, keyDOWN, keyLEFT, keyRIGHT
-let mouseX, mouseY, cursors
