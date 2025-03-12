@@ -499,46 +499,6 @@ class Play extends Phaser.Scene {
                 this.sound.play('shot-sfx')
                 this.time.delayedCall(100, () => { this.isFiring = false })
             }
-
-            // // enemy X movement
-            // if (this.enemyReactTimer > 150) {
-            //     this.enemies.children.iterate((enemy) => {
-            //         if (enemy && this.start) {
-            //             let angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.chr.x, this.chr.y)
-            //             let speed = 120
-            //             let v_x = Math.cos(angle) * speed
-            //             enemy.setVelocityX(v_x)
-            //             if (v_x < 0) {
-            //                 enemy.setFlip(true, false)
-            //             } else if (v_x > 0) {
-            //                 enemy.resetFlip()
-            //             }
-            //         }
-            //     })
-            //     this.enemyReactTimer = 0
-            // }
-            // this.enemyReactTimer++
-
-            // this.enemies.children.iterate((enemy) => {
-            //     if (enemy && this.start) {
-            //         let justCollide = false
-            //         // let edgeCheckX = enemy.x + (enemy.body.velocity.x > 0 ? 15 : -15)
-            //         // let edgeCheckY = enemy.y + 20; // Check slightly below enemy
-            //         // let frontCheckX = enemy.x + (enemy.body.velocity.x > 0 ? 20 : -20)
-
-            //         // let onEdge = !this.plats.children.entries.some(plat =>
-            //         //     plat.getBounds().contains(edgeCheckX, edgeCheckY)
-            //         // )
-
-            //         // let platformAhead = this.plats.children.entries.some(plat =>
-            //         //     plat.getBounds().contains(frontCheckX, enemy.y)
-            //         // )
-
-            //         // if ((onEdge || platformAhead) && enemy.body.touching.down) {
-            //         //     enemy.setVelocityY(this.JUMP_VELOCITY + 250)
-            //         // }
-            //     }
-            // })
         }
 
         // destroy enemy outside the map
@@ -592,13 +552,7 @@ class Play extends Phaser.Scene {
             while (x >= this.chr.x - this.spawnRange && x <= this.chr.x + this.spawnRange) {
                 x = Phaser.Math.Between(-500, this.map.width + 500)
             }
-            let y = 0
-            y = Phaser.Math.Between(-200, -500)
-            // if (mode == 'Mode1') {
-            //     y = Phaser.Math.Between(-200, -500)
-            // } else if (mode == 'Mode2') {
-            //     y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
-            // }
+            let y = Phaser.Math.Between(-200, -500)
             let enemy_apple = this.enemies.create(x, y, 'apple').setScale(0.4).setDepth(2)
             enemy_apple.body.setSize(enemy_apple.width * 0.6, enemy_apple.height * 0.8)
             enemy_apple.body.setOffset((enemy_apple.width - enemy_apple.body.width) / 2, (enemy_apple.height - enemy_apple.body.height))
@@ -624,13 +578,7 @@ class Play extends Phaser.Scene {
             while (x >= this.chr.x - this.spawnRange && x <= this.chr.x + this.spawnRange) {
                 x = Phaser.Math.Between(-500, this.map.width + 500)
             }
-            let y = 0
-            y = Phaser.Math.Between(-200, -500)
-            // if (mode == 'Mode1') {
-            //     y = Phaser.Math.Between(-200, -500)
-            // } else if (mode == 'Mode2') {
-            //     y = Phaser.Math.Between(this.map.height / 2, this.map.height - 100)
-            // }
+            let y = Phaser.Math.Between(-200, -500)
             let enemy_peach = this.enemies.create(x, y, 'peach').setScale(0.55).setDepth(2)
             enemy_peach.body.setSize(enemy_peach.width * 0.6, enemy_peach.height * 0.8)
             enemy_peach.body.setOffset((enemy_peach.width - enemy_peach.body.width + 8) / 2, (enemy_peach.height - enemy_peach.body.height))

@@ -4,11 +4,7 @@ class Tutorial extends Phaser.Scene {
     }
 
     create() {
-        // // bgm
-        // this.menubgm = this.sound.add('menubgm', { loop: true, volume: 0.4, rate: 0.97 })
-        // this.menubgm.play()
-
-        // text at the top
+        // texts
         this.textConfig = {
             fontFamily: 'Comic Sans MS',
             fontSize: '60px',
@@ -32,8 +28,8 @@ class Tutorial extends Phaser.Scene {
 
         this.add.text(game.config.width / 2, 850, 'Press Z to Start', this.textConfig).setOrigin(0.5)
 
+        // press Z to start
         this.input.keyboard.on('keydown-Z', () => {
-            // this.menubgm.stop()
             this.scene.start('playScene')
         })
     }

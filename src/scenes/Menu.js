@@ -243,6 +243,7 @@ class Menu extends Phaser.Scene {
         }
 
 
+        // press any key to start
         this.input.keyboard.on('keydown', () => {
             game.settings = { gameSpeed: 10 }
             this.sound.play('select-sfx', { volume: 0.5 })

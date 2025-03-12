@@ -13,6 +13,7 @@ class Bullet extends Phaser.Physics.Arcade.Image {
         this.body.setAllowGravity(false)
     }
 
+    // when bullet hits the world bounds
     onWorldBounds() {
         this.disableBody(true, true)
     }
@@ -30,6 +31,7 @@ class Bullets extends Phaser.Physics.Arcade.Group {
         if (bullet) { bullet.fire(x, y, vx, vy, direction) }
     }
 
+    // create bullets
     onCreate(bullet) {
         bullet.onCreate()
     }
